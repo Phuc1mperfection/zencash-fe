@@ -30,3 +30,27 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+:root {
+  --primary-color: #00ed64; /* Màu chính */
+  --primary-light: #00684A; /* Màu chính sáng hơn */
+  --primary-dark: #023430; /* Màu chính tối hơn */
+}
+:root {
+  --secondary-color: #001e2b; /* Màu phụ */
+  --secondary-light: #FFD678; 
+  --secondary-dark: #61512E; 
+}
+:root {
+  --white: #FFFAFA;
+  --black: #000000;
+  --gray-light: #F0F8FF;
+  --gray: #E8E8E8;
+  --gray-dark: #808080;
+
+}
+:root {
+  --success-color: #2ecc71; /* Màu thành công */
+  --error-color: #e74c3c; /* Màu lỗi */
+  --warning-color: #f1c40f; /* Màu cảnh báo */
+  --info-color: #3498db; /* Màu thông tin */
+}

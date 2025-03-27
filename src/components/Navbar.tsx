@@ -1,38 +1,62 @@
-import  { useState, useEffect } from 'react';
-import { Menu, X, Wallet, BarChart2, Users, Phone, LogIn, Sparkles } from 'lucide-react';
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Menu,
+  X,
+  BarChart2,
+  Users,
+  Phone,
+  LogIn,
+  Sparkles,
+} from "lucide-react";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { name: 'Features', icon: <Sparkles className="w-4 h-4" /> },
-    { name: 'Pricing', icon: <BarChart2 className="w-4 h-4" /> },
-    { name: 'About', icon: <Users className="w-4 h-4" /> },
-    { name: 'Contact', icon: <Phone className="w-4 h-4" /> },
+    { name: "Features", icon: <Sparkles className="w-4 h-4" /> },
+    { name: "Pricing", icon: <BarChart2 className="w-4 h-4" /> },
+    { name: "About", icon: <Users className="w-4 h-4" /> },
+    { name: "Contact", icon: <Phone className="w-4 h-4" /> },
   ];
 
+  const handleSignIn = () => {
+    navigate("/login");
+    setIsOpen(false); // Close mobile menu when navigating
+  };
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/90 backdrop-blur-md shadow-md' : 'bg-transparent'
-    }`}>
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 ${
+        isScrolled ? "bg-white/90 backdrop-blur-md shadow-md" : "bg-transparent"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Wallet className="h-8 w-8 text-[#00ed64]" />
-            <span className={`ml-2 text-xl font-bold transition-colors duration-300 ${
-              isScrolled ? 'text-[#001e2b]' : 'text-white'
-            }`}>Zen Cash</span>
+          <div
+            className="flex-shrink-0 flex items-center cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            {/* <Wallet className="h-8 w-8 text-[#00ed64]" /> */}
+            <img src="/logo.svg" alt="Zen Cash Logo" className="h-8 w-8" />
+            <span
+              className={`ml-2 text-xl font-bold transition-colors duration-300 ${
+                isScrolled ? "text-[#001e2b]" : "text-white"
+              }`}
+            >
+              Zen Cash
+            </span>
           </div>
 
           {/* Desktop Navigation */}
@@ -47,7 +71,10 @@ const Navbar = () => {
                 <span>{link.name}</span>
               </a>
             ))}
-            <button className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200">
+            <button
+              onClick={handleSignIn}
+              className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
+            >
               <LogIn className="w-4 h-4" />
               <span>Sign In</span>
             </button>
@@ -75,7 +102,7 @@ const Navbar = () => {
       {/* Mobile menu */}
       <div
         className={`md:hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         } overflow-hidden bg-white`}
       >
         <div className="px-4 pt-2 pb-3 space-y-1">
@@ -89,7 +116,10 @@ const Navbar = () => {
               <span>{link.name}</span>
             </a>
           ))}
-          <button className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-gray-600 hover:text-[#00ed64] hover:bg-gray-50 transition-colors duration-200">
+          <button
+            onClick={handleSignIn}
+            className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-gray-600 hover:text-[#00ed64] hover:bg-gray-50 transition-colors duration-200"
+          >
             <LogIn className="w-4 h-4" />
             <span>Sign In</span>
           </button>
