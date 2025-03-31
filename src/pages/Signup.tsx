@@ -1,11 +1,35 @@
-import React from 'react';
-import AuthForm from '../components/AuthForm';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import AuthForm from "../components/AuthForm";
+import { AxiosError } from "axios";
+import { showToast } from "../utils/toast";
 
-const Signup = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+export default function Signup() {
+  const navigate = useNavigate();
+  const { signup } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Signup submitted');
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const signupData = {
+      username: formData.get("username") as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    };
+
+    console.log("Signup Payload:", signupData);
+    const loadingToast = showToast.loading("Signing up...");
+
+    try {
+      await signup(signupData);
+      navigate("/dashboard");
+    } catch (err) {
+        const axiosError = err as AxiosError<{ message: string }>;
+      showToast.dismiss(loadingToast);
+      showToast.error(axiosError.response?.data?.message || "Failed to login");
+    }
   };
 
   return (
@@ -17,6 +41,4 @@ const Signup = () => {
       <AuthForm type="signup" onSubmit={handleSubmit} />
     </div>
   );
-};
-
-export default Signup;
+}

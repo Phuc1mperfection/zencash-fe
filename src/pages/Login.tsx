@@ -1,11 +1,35 @@
-import React from 'react';
-import AuthForm from '../components/AuthForm';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import AuthForm from "../components/AuthForm";
+import { AxiosError } from "axios";
+import { showToast } from "../utils/toast";
 
-const Login = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+export default function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login submitted');
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const loginData = {
+      email: formData.get("email") as string,
+      passwordRaw: formData.get("password") as string,
+    };
+
+    const loadingToast = showToast.loading("Signing in...");
+
+    try {
+      await login(loginData);
+      showToast.dismiss(loadingToast);
+      showToast.success("Welcome back!");
+      navigate("/dashboard");
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      showToast.dismiss(loadingToast);
+      showToast.error(axiosError.response?.data?.message || "Failed to login");
+    }
   };
 
   return (
@@ -17,6 +41,4 @@ const Login = () => {
       <AuthForm type="login" onSubmit={handleSubmit} />
     </div>
   );
-};
-
-export default Login;
+}

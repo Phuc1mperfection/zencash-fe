@@ -8,30 +8,27 @@ import {
   X,
   LogOut,
   ArrowLeftRight,
-  Paperclip
+  Paperclip,
+  User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const { user, logout } = useAuth();
 
   // Giả định user đăng nhập
-  const user = {
-    name: "Nguyễn Hồng Phúc",
-    email: "phucnguyen@example.com",
-    avatar: "https://i.pravatar.cc/100",
-  };
 
   const handleLogout = () => {
-    console.log("Đăng xuất...");
-    // Xử lý logout ở đây, có thể dùng localStorage.clear() hoặc gọi API logout
+    logout();
   };
 
   return (
     <div className="flex mt-14">
       <motion.div
         animate={{ width: isOpen ? 250 : 80 }}
-        className="bg-[#001e2b] h-screen p-4 text-white flex flex-col justify-between"
+        className="bg-[#001e2b] backdrop-blur-xl border-r border-white/20 shadow-xl h-screen p-4 text-white flex flex-col justify-between mt-2 rounded-lg"
       >
         {/* Sidebar Menu */}
         <div>
@@ -39,7 +36,7 @@ const Sidebar = () => {
             <h1 className={`text-xl font-bold ${!isOpen && "hidden"}`}></h1>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#00334e]"
+              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors duration-200"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -64,12 +61,12 @@ const Sidebar = () => {
               to="/dashboard/transactions"
               isOpen={isOpen}
             />
-              <SidebarItem
-             icon={Paperclip}
-             text="Invoices"
-             to="/dashboard/invoices"
-             isOpen={isOpen}
-           />
+            <SidebarItem
+              icon={Paperclip}
+              text="Invoices"
+              to="/dashboard/invoices"
+              isOpen={isOpen}
+            />
             <SidebarItem
               icon={Settings}
               text="Settings"
@@ -80,32 +77,35 @@ const Sidebar = () => {
         </div>
 
         {/* User Profile Card */}
-        <div className="border-t border-gray-300/30 w-full mt-64"></div>
-        <div className="mb-10 bg-[#00334e] p-3 rounded-sm flex flex-col items-center">
-          {isOpen ? (
-            <>
-              <img
-                src={user.avatar}
-                alt="User Avatar"
-                className="w-16 h-16 rounded-full border-2 border-white"
-              />
-              <div className="text-center mt-2">
-                <p className="font-semibold">{user.name}</p>
-                <p className="text-xs text-gray-300">{user.email}</p>
+        <div className="border-t border-white/10 w-full mb-8">
+          <div className="p-4 bg-white/5 rounded-lg backdrop-blur-sm">
+            {isOpen ? (
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00ed64] to-[#00684A] flex items-center justify-center">
+                  <User className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold text-white truncate max-w-[180px]">
+                    {user?.username || "User"}
+                  </p>
+                  <p className="text-xs text-gray-300 truncate max-w-[180px]">
+                    {user?.email || "email@example.com"}
+                  </p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm transition-colors duration-200"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="mt-3 flex items-center gap-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
-              >
-                <LogOut size={16} />
-                Logout
-              </button>
-            </>
-          ) : (
-            <div className="flex items-center justify-center">
-              <Settings size={32} />
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center justify-center">
+                <User size={24} />
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>
@@ -123,9 +123,9 @@ const SidebarItem = ({ icon: Icon, text, to, isOpen }: SidebarItemProps) => {
   return (
     <Link
       to={to}
-      className="flex items-center gap-4 p-2 hover:bg-[#00334e] rounded-lg"
+      className="flex items-center gap-4 p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
     >
-      <Icon width={24} height={48} />
+      <Icon width={24} height={24} />
       {isOpen && <span>{text}</span>}
     </Link>
   );

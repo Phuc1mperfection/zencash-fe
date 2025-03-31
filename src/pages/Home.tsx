@@ -4,6 +4,7 @@ import TestimonialCard from '../components/TestimonialCard';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Hero from '../components/Hero';
+import Landing from './Landing';
 
 const data = [
   { category: 'Food', amount: 400 },
@@ -16,8 +17,8 @@ const Home = () => {
   return (
     <>
       {/* Hero Section */}
-    <Hero/>
-
+      <Hero />
+      <Landing />
 
       {/* How It Works Section */}
       <section className="py-20 px-4 bg-gray-50">

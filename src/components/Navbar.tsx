@@ -8,11 +8,15 @@ import {
   Phone,
   LogIn,
   Sparkles,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, getCurrentUser, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,8 +36,16 @@ const Navbar = () => {
 
   const handleSignIn = () => {
     navigate("/login");
-    setIsOpen(false); // Close mobile menu when navigating
+    setIsOpen(false);
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+    setIsOpen(false);
+  };
+
+  const user = getCurrentUser() as { username: string } | null;
 
   return (
     <nav
@@ -71,16 +83,34 @@ const Navbar = () => {
                 <span>{link.name}</span>
               </a>
             ))}
-            <button
-              onClick={handleSignIn}
-              className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Sign In</span>
-            </button>
-            <button className="bg-[#00ed64] text-[#001e2b] px-4 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200">
-              Get Started
-            </button>
+            {isAuthenticated ? (
+              <>
+                <span className="text-gray-600">
+                  Welcome back,{" "}
+                  <span className="font-semibold">{user?.username}</span>
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition-colors duration-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleSignIn}
+                  className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>Sign In</span>
+                </button>
+                <button className="bg-[#00ed64] text-[#001e2b] px-4 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200">
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -116,16 +146,34 @@ const Navbar = () => {
               <span>{link.name}</span>
             </a>
           ))}
-          <button
-            onClick={handleSignIn}
-            className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-gray-600 hover:text-[#00ed64] hover:bg-gray-50 transition-colors duration-200"
-          >
-            <LogIn className="w-4 h-4" />
-            <span>Sign In</span>
-          </button>
-          <button className="w-full bg-[#00ed64] text-[#001e2b] px-3 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200 mt-2">
-            Get Started
-          </button>
+          {isAuthenticated ? (
+            <>
+              <div className="px-3 py-2 text-gray-600">
+                Welcome back,{" "}
+                <span className="font-semibold">{user?.username}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-gray-600 hover:text-red-500 hover:bg-gray-50 transition-colors duration-200"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleSignIn}
+                className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-gray-600 hover:text-[#00ed64] hover:bg-gray-50 transition-colors duration-200"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
+              </button>
+              <button className="w-full bg-[#00ed64] text-[#001e2b] px-3 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200 mt-2">
+                Get Started
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>
