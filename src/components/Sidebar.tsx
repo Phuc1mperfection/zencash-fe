@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen]  = useState(true);
   const { user, logout } = useAuth();
 
   // Giả định user đăng nhập
