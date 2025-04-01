@@ -1,21 +1,14 @@
-import { Navigate, useLocation } from "react-router-dom";
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-interface PrivateRouteProps {
-  children: React.ReactNode;
-}
-
-export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+// Remove children from props if it exists, or define without props
+const PrivateRoute = () => {
   const { isAuthenticated } = useAuth();
-  const location = useLocation();
 
-  // If user is not authenticated, redirect to login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  // If user is authenticated, render the protected page
-  return <>{children}</>;
+  // If authenticated, render the child route using Outlet
+  // If not, redirect to login
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

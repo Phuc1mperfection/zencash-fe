@@ -49,7 +49,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed w-full transition-all duration-300 z-50 ${
         isScrolled ? "bg-white/90 backdrop-blur-md shadow-md" : "bg-transparent"
       }`}
     >
@@ -73,7 +73,6 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-           
             {isAuthenticated ? (
               <>
                 <span className="text-gray-600">
@@ -90,17 +89,16 @@ const Navbar = () => {
               </>
             ) : (
               <div className="hidden md:flex items-center space-x-8">
-
-               {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={`#${link.name.toLowerCase()}`}
-                className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
-              >
-                {link.icon}
-                <span>{link.name}</span>
-              </a>
-            ))}
+                {navLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={`#${link.name.toLowerCase()}`}
+                    className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
+                  >
+                    {link.icon}
+                    <span>{link.name}</span>
+                  </a>
+                ))}
                 <button
                   onClick={handleSignIn}
                   className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
@@ -108,15 +106,15 @@ const Navbar = () => {
                   <LogIn className="w-4 h-4" />
                   <span>Sign In</span>
                 </button>
-                <button className="bg-[#00ed64] text-[#001e2b] px-4 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200">
+                {/* <button className="bg-[#00ed64] text-[#001e2b] px-4 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200">
                   Get Started
-                </button>
+                </button> */}
               </div>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden ">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-[#00ed64] focus:outline-none"
@@ -171,9 +169,9 @@ const Navbar = () => {
                 <LogIn className="w-4 h-4" />
                 <span>Sign In</span>
               </button>
-              <button className="w-full bg-[#00ed64] text-[#001e2b] px-3 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200 mt-2">
+              {/* <button className="w-full bg-[#00ed64] text-[#001e2b] px-3 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200 mt-2">
                 Get Started
-              </button>
+              </button> */}
             </>
           )}
         </div>

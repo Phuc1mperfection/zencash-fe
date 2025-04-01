@@ -24,9 +24,9 @@ export default function Signup() {
 
     try {
       await signup(signupData);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-        const axiosError = err as AxiosError<{ message: string }>;
+      const axiosError = err as AxiosError<{ message: string }>;
       showToast.dismiss(loadingToast);
       showToast.error(axiosError.response?.data?.message || "Failed to login");
     }

@@ -24,7 +24,7 @@ export default function Login() {
       await login(loginData);
       showToast.dismiss(loadingToast);
       showToast.success("Welcome back!");
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       showToast.dismiss(loadingToast);
