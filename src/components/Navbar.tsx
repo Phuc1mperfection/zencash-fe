@@ -73,16 +73,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={`#${link.name.toLowerCase()}`}
-                className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
-              >
-                {link.icon}
-                <span>{link.name}</span>
-              </a>
-            ))}
+           
             {isAuthenticated ? (
               <>
                 <span className="text-gray-600">
@@ -98,7 +89,18 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <>
+              <div className="hidden md:flex items-center space-x-8">
+
+               {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={`#${link.name.toLowerCase()}`}
+                className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
+              >
+                {link.icon}
+                <span>{link.name}</span>
+              </a>
+            ))}
                 <button
                   onClick={handleSignIn}
                   className="flex items-center space-x-1 text-gray-600 hover:text-[#00ed64] transition-colors duration-200"
@@ -109,7 +111,7 @@ const Navbar = () => {
                 <button className="bg-[#00ed64] text-[#001e2b] px-4 py-2 rounded-full font-medium hover:bg-[#00ed64]/90 transition-colors duration-200">
                   Get Started
                 </button>
-              </>
+              </div>
             )}
           </div>
 
