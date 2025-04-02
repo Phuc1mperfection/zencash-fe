@@ -43,21 +43,21 @@ const COLORS = ["#00ed64", "#00b8d4", "#ff6b6b"];
 const Overview = () => {
   return (
     
-    <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-white">Overview</h1>
+    <div className="space-y-8 dark:text-white light:text-black ">
+      <h1 className="text-2xl font-bold ">Overview</h1>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           <h3 className="text-gray-400 text-sm">Total Balance</h3>
-          <p className="text-2xl font-bold text-white mt-2">$12,345</p>
+          <p className="text-2xl font-bold  mt-2">$12,345</p>
         </div>
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           <h3 className="text-gray-400 text-sm">Monthly Income</h3>
-          <p className="text-2xl font-bold text-white mt-2">$8,000</p>
+          <p className="text-2xl font-bold  mt-2">$8,000</p>
         </div>
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           <h3 className="text-gray-400 text-sm">Monthly Expenses</h3>
-          <p className="text-2xl font-bold text-white mt-2">$6,000</p>
+          <p className="text-2xl font-bold  mt-2">$6,000</p>
         </div>
       </div>
 
@@ -65,13 +65,13 @@ const Overview = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Trend Chart */}
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-          <h3 className="text-xl font-semibold text-white mb-4">
+          <h3 className="text-xl font-semibold  mb-4">
             Monthly Trend
           </h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                <CartesianGrid strokeDasharray="3 3" stroke="green" />
                 <XAxis dataKey="name" stroke="#ffffff80" />
                 <YAxis stroke="#ffffff80" />
                 <Tooltip
@@ -97,7 +97,7 @@ const Overview = () => {
 
         {/* Category Distribution Chart */}
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-          <h3 className="text-xl font-semibold text-white mb-4">
+          <h3 className="text-xl font-semibold  mb-4">
             Category Distribution
           </h3>
           <div className="h-[300px]">
@@ -124,7 +124,7 @@ const Overview = () => {
 
       {/* Income vs Expenses Chart */}
       <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-semibold text-white mb-4">
+        <h3 className="text-xl font-semibold  mb-4">
           Income vs Expenses
         </h3>
         <div className="h-[300px]">
@@ -162,7 +162,7 @@ const Overview = () => {
 
       {/* Recent Transactions */}
       <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-semibold text-white mb-4">
+        <h3 className="text-xl font-semibold  mb-4">
           Recent Transactions
         </h3>
         <div className="space-y-4">
@@ -176,12 +176,12 @@ const Overview = () => {
                   <span className="text-[#00ed64]">T{i}</span>
                 </div>
                 <div>
-                  <p className="text-white">Transaction {i}</p>
+                  <p className="">Transaction {i}</p>
                   <p className="text-sm text-gray-400">Category {i}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white">${Math.random() * 1000}</p>
+                <p className="">${Math.random() * 1000}</p>
                 <p className="text-sm text-gray-400">2 hours ago</p>
               </div>
             </div>
