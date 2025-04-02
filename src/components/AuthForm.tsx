@@ -1,15 +1,15 @@
-import React from "react";
+import { FC, FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Github } from "lucide-react";
 
 interface AuthFormProps {
   type: "login" | "signup";
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: FormEvent) => void;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+const AuthForm: FC<AuthFormProps> = ({ type, onSubmit }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <div className="w-full max-w-md p-8 backdrop-blur-xl bg-white/10 rounded-2xl shadow-xl">
