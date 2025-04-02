@@ -49,7 +49,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full transition-all duration-300 z-50 ${
+      className={`fixed w-full transition-all duration-300 z-40 ${
         isScrolled ? "bg-white/90 backdrop-blur-md shadow-md" : "bg-transparent"
       }`}
     >
@@ -63,8 +63,8 @@ const Navbar = () => {
             {/* <Wallet className="h-8 w-8 text-[#00ed64]" /> */}
             <img src="/logo.svg" alt="Zen Cash Logo" className="h-8 w-8" />
             <span
-              className={`ml-2 text-xl font-bold transition-colors duration-300 ${
-                isScrolled ? "text-[#001e2b]" : "text-white"
+              className={`ml-2 text-xl font-bold transition-colors duration-300 dark:text-white text-primary ${
+                isScrolled ? "text-[#001e2b]" : "text-primary"
               }`}
             >
               Zen Cash
