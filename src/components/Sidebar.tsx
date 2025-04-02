@@ -9,11 +9,13 @@ import {
   LogOut,
   ArrowLeftRight,
   Paperclip,
-  User,
   CircleUserRound,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 // Define props for Sidebar
 interface SidebarProps {
@@ -55,13 +57,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
       {/* Desktop Sidebar (Hidden on sm screens) */}
       <motion.div
         animate={{ width: isDesktopOpen ? 250 : 80 }}
-        className="hidden sm:flex bg-[#001e2b]/80 backdrop-blur-xl border-r border-white/20 shadow-xl h-screen p-4 text-white flex-col mt-16 fixed left-0 top-0 z-40 rounded-lg"
-        // Added fixed positioning, mt-16 for navbar height
+        className="hidden sm:flex bg-white/60 dark:bg-slate-900/10 text-slate-900 dark:text-white backdrop-blur-xl border-r border-slate-200 dark:border-slate-800 shadow-lg dark:shadow-slate-900/20 h-screen p-4 flex-col  fixed  top-0 z-50 rounded-lg transition-all duration-300"
+        // Added light mode background/text and transitions
       >
-        {/* Desktop Toggle Button */}
+        {/* Desktop Toggle Button - Colors seem fine */}
         <button
           onClick={() => setIsDesktopOpen(!isDesktopOpen)}
-          className="absolute -right-3 top-8 w-6 h-6 bg-[#00ed64] rounded-full flex items-center justify-center text-[#001e2b] shadow-md z-50"
+          className="absolute -right-3 top-8 w-6 h-6 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center text-white shadow-md z-50 transition-colors duration-200"
         >
           {isDesktopOpen ? <X size={16} /> : <Menu size={16} />}
         </button>
@@ -79,9 +81,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
       <AnimatePresence>
         {isMobileOpen && (
           <>
-            {/* Overlay background */}
+            {/* Overlay background - Remains dark */}
             <motion.div
-              className="fixed inset-0 bg-black/50 z-40 sm:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 sm:hidden"
               initial="hidden"
               animate="visible"
               exit="hidden"
@@ -92,7 +94,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
 
             {/* Mobile Sidebar Content */}
             <motion.div
-              className="fixed top-0 left-0 h-full w-64 bg-[#001e2b] p-4 text-white flex flex-col z-50 sm:hidden"
+              className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-4 flex flex-col z-50 sm:hidden transition-all duration-300"
+              // Added light mode background/text and transitions
               initial="closed"
               animate="open"
               exit="closed"
@@ -102,7 +105,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
               {/* Close button for mobile */}
               <button
                 onClick={() => setIsMobileOpen(false)}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-white hover:bg-white/10"
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors duration-200"
+                // Adjusted colors for light/dark
               >
                 <X size={24} />
               </button>
@@ -134,126 +138,130 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   handleLogout,
   handleItemClick,
   user,
-}) => (
-  <div className="flex flex-col h-full">
-    {/* Top Section: Logo/Title (optional) and Menu Items */}
-    <div className="flex-1 mt-8">
-      {" "}
-      {/* Added margin-top */}
-      {/* Optional: Add logo or title here if needed */}
-      {isOpen && (
-        <h1 className="text-xl font-bold mb-8 text-center text-[#00ed64]">
-          Zen Cash
-        </h1>
-      )}
-      <nav className="flex flex-col gap-2">
-        <SidebarItem
-          icon={Home}
-          text="Overview"
-          to="/dashboard"
-          isOpen={isOpen}
-          onClick={handleItemClick}
-        />
-        <SidebarItem
-          icon={BarChart}
-          text="Reports"
-          to="/dashboard/reports"
-          isOpen={isOpen}
-          onClick={handleItemClick}
-        />
-        <SidebarItem
-          icon={ArrowLeftRight}
-          text="Transactions"
-          to="/dashboard/transactions"
-          isOpen={isOpen}
-          onClick={handleItemClick}
-        />
-        <SidebarItem
-          icon={Paperclip}
-          text="Invoices"
-          to="/dashboard/invoices"
-          isOpen={isOpen}
-          onClick={handleItemClick}
-        />
-        <SidebarItem
-          icon={Settings}
-          text="Settings"
-          to="/dashboard/settings"
-          isOpen={isOpen}
-          onClick={handleItemClick}
-        />
-        <SidebarItem
-          icon={CircleUserRound}
-          text="Profile"
-          to="/dashboard/profile"
-          isOpen={isOpen}
-          onClick={handleItemClick}
-        />
-      </nav>
-    </div>
+}) => {
+  // Calculate fallback initial for Avatar
+  const fallbackInitial = user?.username
+    ? user.username.charAt(0).toUpperCase()
+    : "?";
 
-    {/* Bottom Section: User Profile Card */}
-    <div
-      className={`mb-4 transition-opacity duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
-    >
-      {" "}
-      {/* Improved visibility transition */}
-      <div className="p-4 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
+  return (
+    <div className="flex flex-col h-full">
+      {/* Top Section: Logo/Title (optional) and Menu Items */}
+      <div className="flex-1 mt-8">
+        {/* Optional: Add logo or title here if needed */}
+        {isOpen && (
+          <h1 className="text-xl font-bold mb-8 text-center text-primary dark:text-primary">
+            Zen Cash
+          </h1>
+        )}
+        <nav className="flex flex-col gap-2">
+          <SidebarItem
+            icon={Home}
+            text="Overview"
+            to="/dashboard"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+          />
+          <SidebarItem
+            icon={BarChart}
+            text="Reports"
+            to="/dashboard/reports"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+          />
+          <SidebarItem
+            icon={ArrowLeftRight}
+            text="Transactions"
+            to="/dashboard/transactions"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+          />
+          <SidebarItem
+            icon={Paperclip}
+            text="Invoices"
+            to="/dashboard/invoices"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+          />
+          <SidebarItem
+            icon={Settings}
+            text="Settings"
+            to="/dashboard/settings"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+          />
+          <SidebarItem
+            icon={CircleUserRound}
+            text="Profile"
+            to="/dashboard/profile"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+          />
+        </nav>
+      </div>
+
+      {/* Bottom Section: User Profile Card - Renders differently based on isOpen */}
+      <div className="mt-auto mb-4">
+        {" "}
+        {/* Wrapper div */}
         {isOpen ? (
-          <div className="flex flex-col items-center space-y-3">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00ed64] to-[#00684A] flex items-center justify-center shadow-lg shadow-[#00ed64]/20">
-              <User className="w-8 h-8 text-white" />
-            </div>
-            <div className="text-center">
-              <p className="font-semibold text-white truncate max-w-[180px]">
-                {user?.username || "User"}
-              </p>
-              <p className="text-xs text-gray-300 truncate max-w-[180px]">
-                {user?.email || "email@example.com"}
-              </p>
-            </div>
+          // Use Card component when sidebar is open
+          <Card className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm dark:shadow-slate-900/20 transition-all duration-300  ">
+            {/* Adjusted card background/border for light/dark */}
+            <CardContent className="p-4 flex flex-col items-center space-y-3">
+              <Avatar className="w-16 h-16 border-2 border-primary/50">
+                {/* Fallback gradient likely fine for both modes */}
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-2xl">
+                  {fallbackInitial}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-center">
+                <p className="font-semibold text-slate-900 dark:text-white truncate max-w-[180px] transition-colors duration-300">
+                  {/* Adjusted text color */}
+                  {user?.username || "User"}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[180px] transition-colors duration-300">
+                  {/* Adjusted text color */}
+                  {user?.email || "email@example.com"}
+                </p>
+              </div>
+              {/* Logout button destructive variant likely ok, colors are explicit */}
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors duration-200"
+              >
+                <LogOut size={16} />
+                Logout
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          // Show only logout icon button when closed
+          <div className="flex justify-center">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm transition-colors duration-200"
+              // Destructive colors likely fine for both modes
+              className="flex items-center justify-center w-full p-3 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg transition-colors duration-200"
+              aria-label="Logout"
             >
-              <LogOut size={16} />
-              Logout
+              <LogOut size={20} />
             </button>
           </div>
-        ) : (
-          // Show only logout icon when closed
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center w-full p-2 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors duration-200"
-          >
-            <LogOut size={20} />
-          </button>
         )}
       </div>
     </div>
-    {/* User Profile Card for collapsed state (Desktop only) */}
-    {!isOpen && (
-      <div className="mt-auto mb-4 flex justify-center">
-        <button
-          onClick={handleLogout}
-          className="flex items-center justify-center w-full p-3 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors duration-200"
-        >
-          <LogOut size={20} />
-        </button>
-      </div>
-    )}
-  </div>
-);
+  );
+};
 
-// Update SidebarItem Props to include onClick
+// SidebarItem Component (Updated styles for light/dark)
 interface SidebarItemProps {
   icon: React.ComponentType<React.ComponentProps<"svg">>;
   text: string;
   to: string;
   isOpen: boolean;
-  onClick: () => void; // Added onClick prop
+  onClick: () => void;
 }
 
 const SidebarItem = ({
@@ -263,16 +271,27 @@ const SidebarItem = ({
   isOpen,
   onClick,
 }: SidebarItemProps) => {
+  const location = useLocation();
+  // Simplified isActive logic slightly
+  const isActive =
+    location.pathname === to ||
+    (to === "/dashboard" && location.pathname.startsWith("/dashboard/"));
+
   return (
     <Link
       to={to}
-      onClick={onClick} // Call onClick when link is clicked
-      className={`flex items-center gap-4 p-3 hover:bg-white/10 rounded-lg transition-all duration-200 hover:translate-x-1 ${
+      onClick={onClick}
+      className={`flex items-center gap-4 p-3 rounded-lg transition-all duration-200 hover:translate-x-1 ${
         !isOpen ? "justify-center" : ""
+      } ${
+        isActive
+          ? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary font-semibold" // Active state styles
+          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800" // Normal state styles
       }`}
     >
+      {/* Icon color inherits from text color */}
       <Icon width={24} height={24} />
-      {isOpen && <span>{text}</span>}
+      {isOpen && <span className="truncate">{text}</span>}
     </Link>
   );
 };
