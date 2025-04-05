@@ -10,7 +10,7 @@ import {
   Sparkles,
   LogOut,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/use-Auth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
