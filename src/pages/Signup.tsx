@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/use-Auth";
 import AuthForm from "../components/AuthForm";
 import { AxiosError } from "axios";
 import { showToast } from "../utils/toast";
@@ -25,6 +25,9 @@ export default function Signup() {
     try {
       await signup(signupData);
       navigate("/dashboard", { replace: true });
+      showToast.dismiss(loadingToast);
+      showToast.success("Welcome!");
+
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       showToast.dismiss(loadingToast);
