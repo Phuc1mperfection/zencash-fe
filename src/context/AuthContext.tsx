@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useState,
-  useEffect,
-  FC,
-  ReactNode,
-} from "react";
+import { createContext, useState, useEffect, FC, ReactNode } from "react";
 import { LoginCredentials } from "@/types/LoginCredentials";
 import { SignupData } from "@/types/SignupData";
 import { AuthResponse } from "@/types/AuthResponse";
@@ -19,7 +13,9 @@ interface AuthContextType {
   setUser: (user: User | null) => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -34,6 +30,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           username: currentUser.username,
           email: currentUser.email,
           fullname: currentUser.fullname || "",
+          currency: currentUser.currency || "",
+          language: currentUser.language || "",
         });
         setIsAuthenticated(true);
       }
@@ -48,6 +46,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       username: response.username,
       email: response.email,
       fullname: response.fullname || "",
+      currency: response.currency || "",
+      language: response.language || "",
     });
     setIsAuthenticated(true);
     return response;
@@ -64,6 +64,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       username: loginResponse.username,
       email: loginResponse.email,
       fullname: loginResponse.fullname || "",
+      currency: loginResponse.currency || "",
+      language: loginResponse.language || "",
     });
     setIsAuthenticated(true);
     return loginResponse;
@@ -83,5 +85,3 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-

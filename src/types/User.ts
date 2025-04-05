@@ -4,6 +4,8 @@ export interface User {
     fullname: string;
     username: string;
     email: string;
+    currency?: string;
+    language?: string;
     accessToken?: string;
     // Add more fields if your user object has them
   }

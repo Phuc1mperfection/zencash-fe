@@ -63,6 +63,8 @@ const authService = {
     localStorage.removeItem("username");
     localStorage.removeItem("email");
     localStorage.removeItem("fullname");
+    localStorage.removeItem("currency");
+    localStorage.removeItem("language");
     console.log('User logged out, tokens removed');
   },
 
@@ -74,7 +76,9 @@ const authService = {
         email: localStorage.getItem("email") || "",
         accessToken,
         refreshToken: localStorage.getItem("refreshToken") || "",
-        fullname: localStorage.getItem("fullname") || ""
+        fullname: localStorage.getItem("fullname") || "",
+        currency: localStorage.getItem("currency") || "",
+        language: localStorage.getItem("language") || ""
       };
     }
     return null;
@@ -142,6 +146,8 @@ const authService = {
     localStorage.setItem("username", data.username);
     localStorage.setItem("email", data.email);
     localStorage.setItem("fullname", data.fullname || "");
+    localStorage.setItem("currency", data.currency || "");
+    localStorage.setItem("language", data.language || "");
   },
   
   async updateProfile(userData: Partial<User>): Promise<User> {
@@ -159,7 +165,9 @@ const authService = {
           email: response.data.email || localStorage.getItem("email") || "",
           accessToken: localStorage.getItem("accessToken") || "",
           refreshToken: localStorage.getItem("refreshToken") || "",
-          fullname: response.data.fullname || localStorage.getItem("fullname") || ""
+          fullname: response.data.fullname || localStorage.getItem("fullname") || "",
+          currency: response.data.currency || localStorage.getItem("currency") || "",
+          language: response.data.language || localStorage.getItem("language") || ""
         });
         
         // Show success toast at service level
