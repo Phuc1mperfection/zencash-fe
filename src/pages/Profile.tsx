@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileForm from "@/components/profile/ProfileForm";
 import AppearanceSettings from "@/components/profile/AppearanceSettings";
 import SecuritySettings from "@/components/profile/SecuritySettings";
-import { useAuth } from "@/context/AuthContext"; // Import useAuth
+import { useAuth } from "@/hooks/use-Auth"; // Import useAuth
 
 const Profile = () => {
   const { user } = useAuth(); // Get user context

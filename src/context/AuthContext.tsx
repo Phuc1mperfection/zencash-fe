@@ -1,32 +1,25 @@
-import React, {
+import {
   createContext,
-  useContext,
   useState,
   useEffect,
   FC,
   ReactNode,
 } from "react";
-import authService, {
-  LoginCredentials,
-  SignupData,
-  AuthResponse,
-} from "../services/authService";
-
-interface User {
-  username: string;
-  email: string;
-  name?: string | null;
-}
-
+import { LoginCredentials } from "@/types/LoginCredentials";
+import { SignupData } from "@/types/SignupData";
+import { AuthResponse } from "@/types/AuthResponse";
+import authService from "@/services/authService";
+import { User } from "@/types/User";
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
   signup: (data: SignupData) => Promise<AuthResponse>;
   logout: () => void;
+  setUser: (user: User | null) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -40,6 +33,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setUser({
           username: currentUser.username,
           email: currentUser.email,
+          fullname: currentUser.fullname || "",
         });
         setIsAuthenticated(true);
       }
@@ -53,6 +47,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setUser({
       username: response.username,
       email: response.email,
+      fullname: response.fullname || "",
     });
     setIsAuthenticated(true);
     return response;
@@ -68,6 +63,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setUser({
       username: loginResponse.username,
       email: loginResponse.email,
+      fullname: loginResponse.fullname || "",
     });
     setIsAuthenticated(true);
     return loginResponse;
@@ -81,17 +77,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, signup, logout }}
+      value={{ user, isAuthenticated, login, signup, logout, setUser }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+

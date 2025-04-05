@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/context/AuthContext"; // Import useAuth
+import { useAuth } from "@/hooks/use-Auth"; // Import useAuth
+import authService from "../../services/authService";
 
 // Schema definition
 const profileFormSchema = z.object({
@@ -38,7 +39,9 @@ const profileFormSchema = z.object({
   language: z.string({
     required_error: "Please select a language.",
   }),
-  name: z.string().nullable().optional(),
+  fullname: z.string({
+    required_error: "Please enter your full name.",
+  }),
   // Add avatarUrl if you handle uploads, otherwise keep it simple
   // avatarUrl: z.string().url().optional(),
 });
@@ -50,16 +53,17 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function ProfileForm() {
   const { toast } = useToast();
-  const { user } = useAuth(); // Get user data from context
+  const { user, setUser } = useAuth(); // Get setUser function from context
   const [isLoading, setIsLoading] = useState(false);
 
   // Set default values from AuthContext or fallbacks
   const defaultValues: Partial<ProfileFormValues> = {
+    // hamf
     username: user?.username || "",
     email: user?.email || "",
     currency: "USD", // Add logic to fetch user's saved currency later
     language: "en", // Add logic to fetch user's saved language later
-    name: user?.name || "",
+    fullname: user?.fullname || "",
   };
 
   const form = useForm<ProfileFormValues>({
@@ -76,15 +80,79 @@ export function ProfileForm() {
   function onSubmit(data: ProfileFormValues) {
     setIsLoading(true);
     console.log("Updating profile data:", data);
-    // --- TODO: Implement actual API call to update profile ---
-    // Example: updateProfile(data).then(...).catch(...);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
+
+    // Show loading toast
+    const loadingToast = toast({
+      title: "Updating profile",
+      description: "Please wait while we update your profile...",
+      duration: 5000,
+    });
+
+    // Call the API to update profile
+    authService
+      .updateProfile({
+        username: data.username,
+        email: data.email,
+        fullname: data.fullname,
+      })
+      .then((updatedUser) => {
+        console.log("Profile updated successfully:", updatedUser);
+
+        // Dismiss loading toast
+        loadingToast.dismiss();
+
+        // Show success toast
+        toast({
+          title: "Profile updated successfully",
+          description: "Your profile information has been saved.",
+          duration: 5000,
+        });
+
+        // Update the user data in the AuthContext directly
+        if (setUser && updatedUser) {
+          setUser({
+            username: updatedUser.username || user?.username || "",
+            email: updatedUser.email || user?.email || "",
+            fullname: updatedUser.fullname || user?.fullname || "",
+          });
+
+          // Also update localStorage
+          authService.setUserInfo({
+            username: updatedUser.username || user?.username || "",
+            email: updatedUser.email || user?.email || "",
+            accessToken: authService.getAccessToken() || "",
+            refreshToken: authService.getRefreshToken() || "",
+            fullname: updatedUser.fullname || user?.fullname || "",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to update profile:", error);
+
+        // Dismiss loading toast
+        loadingToast.dismiss();
+
+        // Show error toast with more details
+        let errorMessage = "Failed to update your profile. Please try again.";
+        if (error.response) {
+          // Server responded with an error
+          errorMessage = error.response.data?.message || errorMessage;
+        } else if (error.request) {
+          // Request was made but no response received
+          errorMessage =
+            "No response from server. Please check your connection.";
+        }
+
+        toast({
+          title: "Update failed",
+          description: errorMessage,
+          variant: "destructive",
+          duration: 7000,
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    }, 1000); // Simulate network delay
   }
 
   return (
@@ -155,16 +223,13 @@ export function ProfileForm() {
 
             <FormField
               control={form.control}
-              name="name"
+              name="fullname"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your name"
-                      {...field}
-                      value={field.value as string}
-                    />
+                    {/* Consider making email read-only if it shouldn't be changed */}
+                    <Input placeholder="Enter your full name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
