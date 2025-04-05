@@ -38,6 +38,7 @@ const profileFormSchema = z.object({
   language: z.string({
     required_error: "Please select a language.",
   }),
+  name: z.string().nullable().optional(),
   // Add avatarUrl if you handle uploads, otherwise keep it simple
   // avatarUrl: z.string().url().optional(),
 });
@@ -58,6 +59,7 @@ export function ProfileForm() {
     email: user?.email || "",
     currency: "USD", // Add logic to fetch user's saved currency later
     language: "en", // Add logic to fetch user's saved language later
+    name: user?.name || "",
   };
 
   const form = useForm<ProfileFormValues>({
@@ -151,6 +153,23 @@ export function ProfileForm() {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your name"
+                      {...field}
+                      value={field.value as string}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             {/* Currency Field */}
             <FormField
               control={form.control}
@@ -209,7 +228,11 @@ export function ProfileForm() {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground shadow hover:bg-primary/90">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="bg-primary text-primary-foreground shadow hover:bg-primary/90"
+          >
             {isLoading ? "Saving..." : "Save changes"}
           </Button>
         </form>

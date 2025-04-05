@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  FC,
+  ReactNode,
+} from "react";
 import authService, {
   LoginCredentials,
   SignupData,
@@ -8,6 +15,7 @@ import authService, {
 interface User {
   username: string;
   email: string;
+  name?: string | null;
 }
 
 interface AuthContextType {
@@ -16,23 +24,28 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
   signup: (data: SignupData) => Promise<AuthResponse>;
   logout: () => void;
-  getCurrentUser: () => User | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
+  // Kiểm tra token khi khởi tạo
   useEffect(() => {
-    const currentUser = authService.getCurrentUser() as User | null;
-    if (currentUser) {
-      setUser(currentUser);
-      setIsAuthenticated(true);
-    }
+    const initializeAuth = () => {
+      const currentUser = authService.getCurrentUser();
+      if (currentUser) {
+        setUser({
+          username: currentUser.username,
+          email: currentUser.email,
+        });
+        setIsAuthenticated(true);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
@@ -46,22 +59,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const signup = async (data: SignupData) => {
-    // First, sign up the user
     await authService.signup(data);
-
-    // Then, automatically log in the user with the same credentials
     const loginResponse = await authService.login({
       email: data.email,
       passwordRaw: data.password,
     });
 
-    // Set the user state with the login response
     setUser({
       username: loginResponse.username,
       email: loginResponse.email,
     });
     setIsAuthenticated(true);
-
     return loginResponse;
   };
 
@@ -71,13 +79,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsAuthenticated(false);
   };
 
-  const getCurrentUser = () => {
-    return authService.getCurrentUser() as User | null;
-  };
-
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, signup, logout, getCurrentUser }}
+      value={{ user, isAuthenticated, login, signup, logout }}
     >
       {children}
     </AuthContext.Provider>

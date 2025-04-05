@@ -1,13 +1,14 @@
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// Remove children from props if it exists, or define without props
 const PrivateRoute = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
-  // If authenticated, render the child route using Outlet
-  // If not, redirect to login
+  // Nếu chưa kiểm tra xong authentication, hiển thị màn hình loading
+  if (user === null) {
+    return <div>Loading...</div>; // 🔹 Tránh nhấp nháy khi F5
+  }
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 

@@ -15,8 +15,12 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Landing from "./pages/Landing";
+import useAutoRefreshToken from "./hooks/useAutoRefreshToken";
 
 function App() {
+  // Tự động refresh token
+  useAutoRefreshToken();
+
   return (
     <AuthProvider>
       <Router>
@@ -37,13 +41,12 @@ function AppContent() {
   const showSidebar = isAuthenticated && isDashboardRoute;
 
   return (
-<div className="relative min-h-screen w-full bg-gradient-to-b from-[#f0ebe3] to-[#00684A] dark:bg-gradient-to-b dark:from-[#001e2b] dark:to-[#023430]">
-
+    <div className="relative min-h-screen w-full bg-gradient-to-b from-[#f0ebe3] to-[#00684A] dark:bg-gradient-to-b dark:from-[#001e2b] dark:to-[#023430]">
       <div className="flex">
         {showSidebar && (
           <Sidebar
-          isMobileOpen={isMobileSidebarOpen}
-          setIsMobileOpen={setIsMobileSidebarOpen}
+            isMobileOpen={isMobileSidebarOpen}
+            setIsMobileOpen={setIsMobileSidebarOpen}
           />
         )}
         <Navbar />
