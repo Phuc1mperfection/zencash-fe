@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface AvatarSectionProps {
   username?: string;
@@ -8,6 +9,7 @@ interface AvatarSectionProps {
 export function AvatarSection({ username }: AvatarSectionProps) {
   // Calculate fallback initial for Avatar
   const fallbackInitial = username ? username.charAt(0).toUpperCase() : "?";
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -17,7 +19,9 @@ export function AvatarSection({ username }: AvatarSectionProps) {
         <AvatarFallback>{fallbackInitial}</AvatarFallback>
       </Avatar>
       <div className="space-y-2">
-        <h3 className="text-lg font-medium">Profile picture</h3>
+        <h3 className="text-lg font-medium">
+          {t("profile.avatarSection.title")}
+        </h3>
         <div className="flex flex-wrap gap-2">
           {/* Add upload functionality later */}
           <Button variant="outline" size="sm" disabled>

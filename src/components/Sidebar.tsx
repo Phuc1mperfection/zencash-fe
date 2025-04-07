@@ -10,12 +10,14 @@ import {
   ArrowLeftRight,
   Paperclip,
   CircleUserRound,
+  Wallet,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/use-Auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 // Define props for Sidebar
 interface SidebarProps {
@@ -24,17 +26,39 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
-  const [isDesktopOpen, setIsDesktopOpen] = useState(true);
+  const [isDesktopOpen, setIsDesktopOpen] = useState(false);
   const { user, logout } = useAuth();
-  const location = useLocation(); // Get current location
+  const location = useLocation();
+
+  // Check screen size and set initial sidebar state
+  useEffect(() => {
+    const handleResize = () => {
+      // Get the current window width
+      const width = window.innerWidth;
+
+      // If width is less than 1024px (tablet and mobile), keep sidebar closed
+      if (width < 1024) {
+        setIsDesktopOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogout = () => {
     logout();
-    setIsMobileOpen(false); // Close mobile sidebar on logout
+    setIsMobileOpen(false);
   };
 
   const handleItemClick = () => {
-    setIsMobileOpen(false); // Close mobile sidebar when an item is clicked
+    setIsMobileOpen(false);
   };
 
   // Close mobile sidebar on route change
@@ -57,10 +81,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
       {/* Desktop Sidebar (Hidden on sm screens) */}
       <motion.div
         animate={{ width: isDesktopOpen ? 250 : 80 }}
-        className="hidden sm:flex bg-white/60 dark:bg-slate-900/10 text-slate-900 dark:text-white backdrop-blur-xl border-r border-slate-200 dark:border-slate-800 shadow-lg dark:shadow-slate-900/20 h-screen p-4 flex-col  fixed  top-0 z-50 rounded-lg transition-all duration-300"
-        // Added light mode background/text and transitions
+        className="hidden sm:flex bg-white/60 dark:bg-slate-900/10 text-slate-900 dark:text-white backdrop-blur-xl border-r border-slate-200 dark:border-slate-800 shadow-lg dark:shadow-slate-900/20 h-screen p-4 flex-col fixed top-0 z-50 rounded-lg transition-all duration-300"
       >
-        {/* Desktop Toggle Button - Colors seem fine */}
+        {/* Desktop Toggle Button */}
         <button
           onClick={() => setIsDesktopOpen(!isDesktopOpen)}
           className="absolute -right-3 top-8 w-6 h-6 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center text-white shadow-md z-50 transition-colors duration-200"
@@ -68,20 +91,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
           {isDesktopOpen ? <X size={16} /> : <Menu size={16} />}
         </button>
 
-        {/* Common Sidebar Content (used by both desktop and mobile) */}
+        {/* Common Sidebar Content */}
         <SidebarContent
           isOpen={isDesktopOpen}
           handleLogout={handleLogout}
-          handleItemClick={() => {}} // No need to close desktop sidebar on item click
+          handleItemClick={() => {}}
           user={user}
         />
       </motion.div>
 
-      {/* Mobile Sidebar (Overlay) - Renders based on isMobileOpen */}
+      {/* Mobile Sidebar (Overlay) */}
       <AnimatePresence>
         {isMobileOpen && (
           <>
-            {/* Overlay background - Remains dark */}
+            {/* Overlay background */}
             <motion.div
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 sm:hidden"
               initial="hidden"
@@ -89,13 +112,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
               exit="hidden"
               variants={overlayVariants}
               transition={{ duration: 0.3 }}
-              onClick={() => setIsMobileOpen(false)} // Close on overlay click
+              onClick={() => setIsMobileOpen(false)}
             />
 
             {/* Mobile Sidebar Content */}
             <motion.div
               className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-4 flex flex-col z-50 sm:hidden transition-all duration-300"
-              // Added light mode background/text and transitions
               initial="closed"
               animate="open"
               exit="closed"
@@ -106,15 +128,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
               <button
                 onClick={() => setIsMobileOpen(false)}
                 className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors duration-200"
-                // Adjusted colors for light/dark
               >
                 <X size={24} />
               </button>
               {/* Use the common content component */}
               <SidebarContent
-                isOpen={true} // Always open layout for mobile
+                isOpen={true}
                 handleLogout={handleLogout}
-                handleItemClick={handleItemClick} // Close mobile on item click
+                handleItemClick={handleItemClick}
                 user={user}
               />
             </motion.div>
@@ -143,6 +164,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   const fallbackInitial = user?.username
     ? user.username.charAt(0).toUpperCase()
     : "?";
+  const { t } = useTranslation(); // Sử dụng hook useTranslation
 
   return (
     <div className="flex flex-col h-full">
@@ -161,20 +183,24 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             to="/dashboard"
             isOpen={isOpen}
             onClick={handleItemClick}
+            translationKey="sidebar.overview"
           />
-          <SidebarItem
-            icon={BarChart}
-            text="Reports"
-            to="/dashboard/reports"
-            isOpen={isOpen}
-            onClick={handleItemClick}
-          />
+    
           <SidebarItem
             icon={ArrowLeftRight}
             text="Transactions"
             to="/dashboard/transactions"
             isOpen={isOpen}
             onClick={handleItemClick}
+            translationKey="sidebar.transactions"
+          />
+             <SidebarItem
+            icon={Wallet}
+            text="Budget"
+            to="/dashboard/budget"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+            translationKey="sidebar.budget"
           />
           <SidebarItem
             icon={Paperclip}
@@ -182,6 +208,23 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             to="/dashboard/invoices"
             isOpen={isOpen}
             onClick={handleItemClick}
+            translationKey="sidebar.invoices"
+          />
+            <SidebarItem
+            icon={BarChart}
+            text="Reports"
+            to="/dashboard/reports"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+            translationKey="sidebar.reports"
+          />
+             <SidebarItem
+            icon={CircleUserRound}
+            text="Profile"
+            to="/dashboard/profile"
+            isOpen={isOpen}
+            onClick={handleItemClick}
+            translationKey="sidebar.profile"
           />
           <SidebarItem
             icon={Settings}
@@ -189,13 +232,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             to="/dashboard/settings"
             isOpen={isOpen}
             onClick={handleItemClick}
-          />
-          <SidebarItem
-            icon={CircleUserRound}
-            text="Profile"
-            to="/dashboard/profile"
-            isOpen={isOpen}
-            onClick={handleItemClick}
+            translationKey="sidebar.settings"
           />
         </nav>
       </div>
@@ -233,7 +270,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 className="w-full flex items-center gap-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors duration-200"
               >
                 <LogOut size={16} />
-                Logout
+                {t("common.logout")}
               </Button>
             </CardContent>
           </Card>
@@ -244,7 +281,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               onClick={handleLogout}
               // Destructive colors likely fine for both modes
               className="flex items-center justify-center w-full p-3 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg transition-colors duration-200"
-              aria-label="Logout"
+              aria-label={t("common.logout")}
             >
               <LogOut size={20} />
             </button>
@@ -262,6 +299,7 @@ interface SidebarItemProps {
   to: string;
   isOpen: boolean;
   onClick: () => void;
+  translationKey?: string; // Thêm key cho translation
 }
 
 const SidebarItem = ({
@@ -270,12 +308,18 @@ const SidebarItem = ({
   to,
   isOpen,
   onClick,
+  translationKey,
 }: SidebarItemProps) => {
   const location = useLocation();
+  const { t } = useTranslation(); // Sử dụng hook useTranslation
+
   // Simplified isActive logic slightly
   const isActive =
     location.pathname === to ||
     (to === "/dashboard" && location.pathname.startsWith("/dashboard/"));
+
+  // Sử dụng translation key nếu có, nếu không thì sử dụng text
+  const displayText = translationKey ? t(translationKey) : text;
 
   return (
     <Link
@@ -291,7 +335,7 @@ const SidebarItem = ({
     >
       {/* Icon color inherits from text color */}
       <Icon width={24} height={24} />
-      {isOpen && <span className="truncate">{text}</span>}
+      {isOpen && <span className="truncate">{displayText}</span>}
     </Link>
   );
 };

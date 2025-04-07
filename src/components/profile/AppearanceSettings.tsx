@@ -6,24 +6,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { useTheme } from "@/hooks/use-theme"; // Use the hook we created
+import { useTheme } from "@/hooks/use-theme";
+import { useTranslation } from "react-i18next";
 
 export function AppearanceSettings() {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Appearance</CardTitle>
-        <CardDescription>Customize how ZenCash looks.</CardDescription>
+        <CardTitle>{t("appearance.title")}</CardTitle>
+        <CardDescription>{t("appearance.description")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
+        <div className="space-y-4">
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div>
-              <h3 className="text-base font-medium">Dark Mode</h3>
+              <h3 className="text-base font-medium">
+                {t("appearance.darkMode.title")}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Switch between light and dark mode.
+                {t("appearance.darkMode.description")}
               </p>
             </div>
             <Switch
@@ -34,14 +38,6 @@ export function AppearanceSettings() {
             />
           </div>
         </div>
-
-        {/* Optional: Add Theme selection if you have multiple themes */}
-        {/* <div className="space-y-2">
-          <h3 className="text-base font-medium">Theme</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-             Theme options here
-          </div>
-        </div> */}
       </CardContent>
     </Card>
   );
