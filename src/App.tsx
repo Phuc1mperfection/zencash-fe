@@ -17,6 +17,7 @@ import Signup from "./pages/Signup";
 import Landing from "./pages/Landing";
 import useAutoRefreshToken from "./hooks/useAutoRefreshToken";
 import { useAuth } from "./hooks/use-Auth";
+import { ChatAssistant } from "./components/chat/ChatAssistant";
 
 function App() {
   // Tự động refresh token
@@ -67,6 +68,14 @@ function AppContent() {
             </Route>
           </Routes>
         </main>
+      {isAuthenticated
+      ? (
+        <div className="fixed bottom-4 right-4 z-50">
+          <ChatAssistant />
+            
+        </div>
+      ) : null}
+        
       </div>
     </div>
   );
