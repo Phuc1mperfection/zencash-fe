@@ -1,0 +1,81 @@
+{
+  "common": {
+    "login": "Đăng nhập",
+    "signup": "Đăng ký",
+    "logout": "Đăng xuất",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "username": "Tên đăng nhập",
+    "fullname": "Họ và tên",
+    "submit": "Gửi",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "welcome": "Chào mừng trở lại",
+    "language": "Ngôn ngữ"
+  },
+  "auth": {
+    "loginTitle": "Đăng nhập vào tài khoản",
+    "signupTitle": "Tạo tài khoản mới",
+    "forgotPassword": "Quên mật khẩu?",
+    "rememberMe": "Ghi nhớ đăng nhập",
+    "noAccount": "Chưa có tài khoản?",
+    "haveAccount": "Đã có tài khoản?",
+    "loginSuccess": "Đăng nhập thành công",
+    "signupSuccess": "Đăng ký thành công",
+    "logoutSuccess": "Đăng xuất thành công"
+  },
+  "profile": {
+    "title": "Hồ sơ",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "updateProfile": "Cập nhật hồ sơ",
+    "profileUpdated": "Cập nhật hồ sơ thành công",
+    "currency": "Tiền tệ",
+    "language": "Ngôn ngữ",
+    "selectCurrency": "Chọn tiền tệ",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "avatarSection.title": "Ảnh đại diện"
+
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "appearance": "Giao diện",
+    "notifications": "Thông báo",
+    "security": "Bảo mật",
+    "privacy": "Quyền riêng tư",
+    "language": "Ngôn ngữ",
+    "currency": "Tiền tệ"
+  },
+  "sidebar": {
+    "overview": "Tổng quan",
+    "reports": "Báo cáo",
+    "transactions": "Giao dịch",
+    "invoices": "Hóa đơn",
+    "settings": "Cài đặt",
+    "profile": "Hồ sơ",
+    "budget": "Ngân sách"
+  },
+  "errors": {
+    "required": "Trường này là bắt buộc",
+    "invalidEmail": "Địa chỉ email không hợp lệ",
+    "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự",
+    "passwordsDoNotMatch": "Mật khẩu không khớp",
+    "serverError": "Lỗi máy chủ. Vui lòng thử lại sau",
+    "networkError": "Lỗi kết nối. Vui lòng kiểm tra kết nối của bạn"
+  },
+
+  "appearance": {
+    "title": "Cài đặt giao diện",
+    "darkMode": {
+      "title": "Chế độ",
+      "description": "Chuyển đổi giữa chế độ sáng và tối để phù hợp với sở thích của bạn."
+    },
+    "description": "Tùy chỉnh cách ZenCash nhìn và cảm nhận."
+  }
+}
