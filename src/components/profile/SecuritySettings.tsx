@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { FormEvent, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
+import authService from "@/services/authService";
 
 export function SecuritySettings() {
   const { toast } = useToast();
@@ -23,22 +24,32 @@ export function SecuritySettings() {
   // Add state for 2FA if implementing
   // const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(false);
 
-  const handleUpdatePassword = (event: FormEvent<HTMLFormElement>) => {
+  const handleUpdatePassword = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSavingPassword(true);
-    // --- TODO: Add actual password change logic ---
-    console.log("Password change form submitted");
-    setTimeout(() => {
-      setIsSavingPassword(false);
-      toast({
-        title: "Password Updated",
-        description:
-          "Your password has been changed successfully. (Simulation)",
-        variant: "default",
+
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const currentPassword = formData.get("currentPassword") as string;
+    const newPassword = formData.get("newPassword") as string;
+    const confirmNewPassword = formData.get("confirmNewPassword") as string;
+
+    try {
+      await authService.changePassword({
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
       });
-      // Optionally clear form fields
-      (event.target as HTMLFormElement).reset();
-    }, 1000);
+
+      // Reset form after successful password change
+      form.reset();
+    } catch (error) {
+      // Error handling is done in the service
+      console.error("Password change failed:", error);
+    } finally {
+      setIsSavingPassword(false);
+    }
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,6 +79,7 @@ export function SecuritySettings() {
               <div className="relative">
                 <Input
                   id="current-password"
+                  name="currentPassword"
                   type={showCurrentPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="mt-1 pr-10"
@@ -92,6 +104,7 @@ export function SecuritySettings() {
               <div className="relative">
                 <Input
                   id="new-password"
+                  name="newPassword"
                   type={showNewPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="mt-1 pr-10"
@@ -112,6 +125,7 @@ export function SecuritySettings() {
               <div className="relative">
                 <Input
                   id="confirm-password"
+                  name="confirmNewPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="mt-1 pr-10"
