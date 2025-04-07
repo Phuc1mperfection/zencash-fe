@@ -5,6 +5,7 @@ import Overview from "./Overview";
 import { Transactions } from "./Transactions";
 import { Invoices } from "./Invoices";
 import Profile from "./Profile";
+import Budget from "./Budget";
 
 const Dashboard = () => {
   return (
@@ -20,6 +21,7 @@ const Dashboard = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="invoices" element={<Invoices />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="budget" element={<Budget />} />
           </Routes>
         </div>
       </div>
