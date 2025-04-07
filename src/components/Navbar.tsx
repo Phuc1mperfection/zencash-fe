@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Menu,
   X,
@@ -10,6 +10,18 @@ import {
   Sparkles,
   LogOut,
 } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+} from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/use-Auth";
 import { useTranslation } from "react-i18next";
 
@@ -17,9 +29,12 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
   const { t } = useTranslation();
-
+  const fallbackInitial = user?.username
+    ? user.username.charAt(0).toUpperCase()
+    : "?";
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -49,7 +64,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full transition-all duration-300 z-40 ${
+      className={`fixed w-full transition-all duration-300 z-40  ${
         isScrolled ? "bg-white/90 backdrop-blur-md shadow-md" : "bg-transparent"
       }`}
     >
@@ -72,20 +87,35 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4 ">
             {isAuthenticated ? (
               <>
                 <span className="text-gray-600">
                   {t("common.welcome")},{" "}
                   <span className="font-semibold">{user?.username}</span>
                 </span>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition-colors duration-200"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>{t("common.logout")}</span>
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full h-8 w-8 ml-1"
+                    >
+                     <Avatar className="w-9 h-9  border-primary/50">
+                {/* Fallback gradient likely fine for both modes */}
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-2xl">
+                  {fallbackInitial}
+                </AvatarFallback>
+              </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => navigate("dashboard/profile")}>{t("profile.title")}</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("dashboard/settings")}>{t("settings.title")}</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>{t("common.logout")}</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <div className="hidden md:flex items-center space-x-8">
@@ -130,12 +160,19 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {isAuthenticated ? (
+            {isAuthenticated && location.pathname !== "/dashboard" ? (
               <>
                 <div className="px-3 py-2 text-gray-600">
                   {t("common.welcome")},{" "}
                   <span className="font-semibold">{user?.username}</span>
                 </div>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="w-full flex items-center px-3 py-2 text-gray-600 hover:text-blue-500 transition-colors duration-200"
+                >
+                  <BarChart2 className="w-4 h-4 mr-2" />
+                  <span>{t("common.dashboard")}</span>
+                </button>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center px-3 py-2 text-gray-600 hover:text-red-500 transition-colors duration-200"
