@@ -60,25 +60,22 @@ const authService = {
   logout(): void {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    localStorage.removeItem("username");
-    localStorage.removeItem("email");
-    localStorage.removeItem("fullname");
-    localStorage.removeItem("currency");
-    localStorage.removeItem("language");
+    localStorage.removeItem("user");
     console.log('User logged out, tokens removed');
   },
 
   getCurrentUser(): AuthResponse | null {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       return {
-        username: localStorage.getItem("username") || "",
-        email: localStorage.getItem("email") || "",
+        username: user.username || "",
+        email: user.email || "",
         accessToken,
         refreshToken: localStorage.getItem("refreshToken") || "",
-        fullname: localStorage.getItem("fullname") || "",
-        currency: localStorage.getItem("currency") || "",
-        language: localStorage.getItem("language") || ""
+        fullname: user.fullname || "",
+        currency: user.currency || "",
+        language: user.language || ""
       };
     }
     return null;
@@ -141,13 +138,18 @@ const authService = {
   },
 
   setUserInfo(data: AuthResponse): void {
+    // Lưu token riêng biệt
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
-    localStorage.setItem("username", data.username);
-    localStorage.setItem("email", data.email);
-    localStorage.setItem("fullname", data.fullname || "");
-    localStorage.setItem("currency", data.currency || "");
-    localStorage.setItem("language", data.language || "");
+    
+    // Lưu thông tin người dùng dưới dạng JSON
+    localStorage.setItem("user", JSON.stringify({
+      username: data.username,
+      email: data.email,
+      fullname: data.fullname || "",
+      currency: data.currency || "",
+      language: data.language || ""
+    }));
   },
   
   async updateProfile(userData: Partial<User>): Promise<User> {
@@ -184,6 +186,41 @@ const authService = {
         // Show error toast at service level
         const errorMessage = error.response?.data?.message || 'Failed to update profile';
         toast.error(errorMessage);
+      }
+      throw error;
+    }
+  },
+
+  async changePassword(passwordData: {
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  }): Promise<void> {
+    try {
+      console.log('Making password change request to:', `${API_URL}/users/change-password`);
+      console.log('Password change request body:', { ...passwordData, newPassword: '***', confirmNewPassword: '***' });
+      
+      const response = await api.post('/users/change-password', passwordData);
+      console.log('Password change response:', response.data);
+      
+      // Show success toast
+      toast.success('Password changed successfully');
+      
+      return response.data;
+    } catch (error) {
+      console.error('Password change request failed:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Error response:', error.response?.data);
+        console.error('Error status:', error.response?.status);
+        
+        // Show specific error message from server
+        const errorMessage = error.response?.data || 'Failed to change password';
+        
+        // Show error toast with specific message
+        toast.error(errorMessage);
+        
+        // Throw error with specific message for component handling
+        throw new Error(errorMessage);
       }
       throw error;
     }
