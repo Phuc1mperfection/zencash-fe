@@ -18,7 +18,8 @@
     "warning": "Warning",
     "info": "Information",
     "welcome": "Welcome back",
-    "language": "Language"
+    "language": "Language",
+    "dashboard": "Dashboard"
   },
   "auth": {
     "loginTitle": "Login to your account",
@@ -39,7 +40,8 @@
     "currency": "Currency",
     "language": "Language",
     "selectCurrency": "Select Currency",
-    "selectLanguage": "Select Language"
+    "selectLanguage": "Select Language",
+    "avatarSection.title": "Avatar"
   },
   "settings": {
     "title": "Settings",

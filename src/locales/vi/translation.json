@@ -18,7 +18,9 @@
     "warning": "Cảnh báo",
     "info": "Thông tin",
     "welcome": "Chào mừng trở lại",
-    "language": "Ngôn ngữ"
+    "language": "Ngôn ngữ",
+    "dashboard": "Dashboard"
+
   },
   "auth": {
     "loginTitle": "Đăng nhập vào tài khoản",
