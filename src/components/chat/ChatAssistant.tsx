@@ -96,60 +96,61 @@ export function ChatAssistant() {
 
           {!isMinimized && (
             <>
-              <CardContent className="p-0 flex flex-col h-[calc(100%-120px)]">
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message, index) => {
-                    const timestamp = new Date(message.timestamp);
-                    const formattedTime = !isNaN(timestamp.getTime())
-                      ? timestamp.toLocaleTimeString([], {
-                        weekday: "short",
-                        day: "numeric",
-                        month: "short",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : ""; // Nếu không hợp lệ, hiển thị chuỗi trống hoặc có thể là một giá trị mặc định
+             <CardContent className="p-0 flex flex-col h-[calc(100%-120px)]">
+  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    {messages.map((message, index) => {
+      const timestamp = new Date(message.timestamp);
+      const formattedTime = !isNaN(timestamp.getTime())
+        ? timestamp.toLocaleTimeString([], {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "";
 
-                    return (
-                      <div
-                        key={index}
-                        className={cn(
-                          "flex flex-col max-w-[85%] rounded-lg p-3 text-sm",
-                          message.sender === "user"
-                            ? "bg-primary text-primary-foreground ml-auto"
-                            : "bg-muted self-start"
-                        )}
-                      >
-                        {message.content}
-                        <span className="text-xs opacity-70 mt-1 self-end">
-                          {formattedTime}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+      return (
+        <div
+          key={index}
+          className={cn(
+            "flex flex-col max-w-[85%] rounded-lg p-3 text-sm",
+            message.sender === "user"
+              ? "bg-primary text-primary-foreground ml-auto"
+              : "bg-muted self-start"
+          )}
+        >
+          {/* Sử dụng dangerouslySetInnerHTML để hiển thị HTML */}
+          <div dangerouslySetInnerHTML={{ __html: message.content }} />
+          
+          <span className="text-xs opacity-70 mt-1 self-end">
+            {formattedTime}
+          </span>
+        </div>
+      );
+    })}
+  </div>
 
-                {messages.length === 1 && (
-                  <div className="p-4 border-t">
-                    <h4 className="text-sm font-medium mb-2">
-                      Suggested questions:
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {suggestedQuestions.map((question) => (
-                        <Button
-                          key={question}
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                          onClick={() => handleSuggestedQuestion(question)}
-                        >
-                          {question}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
+  {messages.length === 1 && (
+    <div className="p-4 border-t">
+      <h4 className="text-sm font-medium mb-2">Suggested questions:</h4>
+      <div className="flex flex-wrap gap-2">
+        {suggestedQuestions.map((question) => (
+          <Button
+            key={question}
+            variant="outline"
+            size="sm"
+            className="text-xs"
+            onClick={() => handleSuggestedQuestion(question)}
+          >
+            {question}
+          </Button>
+        ))}
+      </div>
+    </div>
+  )}
+</CardContent>
+
 
               <div className="p-2 border-t ">
                 <div className="flex items-center justify-center space-x-2 ">
