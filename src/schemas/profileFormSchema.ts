@@ -10,9 +10,6 @@ export const profileFormSchema = z.object({
   currency: z.string({
     required_error: "Please select a currency.",
   }),
-  language: z.string({
-    required_error: "Please select a language.",
-  }),
   fullname: z.string({
     required_error: "Please enter your full name.",
   }),
