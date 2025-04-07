@@ -51,7 +51,8 @@
     "privacy": "Privacy",
     "language": "Language",
     "currency": "Currency",
-    "avatarSection.title": "Avatar"
+    "avatarSection.title": "Avatar",
+    "selectLanguage": "Select Language"
   },
   "appearance": {
     "title": "Appearance Settings",
