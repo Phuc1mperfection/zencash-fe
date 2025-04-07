@@ -38,6 +38,29 @@ export function AppearanceSettings() {
             />
           </div>
         </div>
+        <div className="space-y-2">
+                <h3 className="text-base font-medium">Theme</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div 
+                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                      theme === "light" ? "border-primary ring-1 ring-primary" : "border-border"
+                    }`}
+                    onClick={() => setTheme("light")}
+                  >
+                    <div className="h-24 bg-card rounded-md mb-2 border"></div>
+                    <p className="text-center text-sm font-medium">Light</p>
+                  </div>
+                  <div 
+                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                      theme === "dark" ? "border-primary ring-1 ring-primary" : "border-border"
+                    }`}
+                    onClick={() => setTheme("dark")}
+                  >
+                    <div className="h-24 bg-zinc-800 rounded-md mb-2 border border-zinc-700"></div>
+                    <p className="text-center text-sm font-medium">Dark</p>
+                  </div>
+                </div>
+              </div>
       </CardContent>
     </Card>
   );
