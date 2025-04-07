@@ -27,8 +27,7 @@ export function useProfileUpdate() {
         username: data.username,
         email: data.email,
         fullname: data.fullname,
-        currency: data.currency,
-        language: data.language
+        currency: data.currency
       });
 
       console.log("Profile updated successfully:", updatedUser);
@@ -50,19 +49,20 @@ export function useProfileUpdate() {
           email: updatedUser.email || user?.email || "",
           fullname: updatedUser.fullname || user?.fullname || "",
           currency: updatedUser.currency || user?.currency || "",
-          language: updatedUser.language || user?.language || ""
+          language: user?.language || "" // Keep the existing language
         });
 
         // Also update localStorage
-        authService.setUserInfo({
-          username: updatedUser.username || user?.username || "",
-          email: updatedUser.email || user?.email || "",
-          accessToken: authService.getAccessToken() || "",
-          refreshToken: authService.getRefreshToken() || "",
-          fullname: updatedUser.fullname || user?.fullname || "",
-          currency: updatedUser.currency || user?.currency || "",
-          language: updatedUser.language || user?.language || ""
-        });
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        const updatedUserData = {
+          ...currentUser,
+          username: updatedUser.username || currentUser.username || "",
+          email: updatedUser.email || currentUser.email || "",
+          fullname: updatedUser.fullname || currentUser.fullname || "",
+          currency: updatedUser.currency || currentUser.currency || "",
+          language: currentUser.language || "" // Keep the existing language
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUserData));
       }
 
       return updatedUser;
