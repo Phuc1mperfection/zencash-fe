@@ -1,5 +1,6 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getBudgets } from "@/services/budgetService";
+import { formatCurrency } from "@/utils/currencyFormatter";
 import {
   Card,
   CardContent,
@@ -43,9 +44,9 @@ const Budget = () => {
               <CardDescription>Total Budget</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${budget.totalAmount}</div>
+              <div className="text-2xl font-bold">{formatCurrency(budget.totalAmount)}</div>
               <p className="text-xs text-muted-foreground">
-                Remaining: ${budget.remainingAmount}
+                Remaining: {formatCurrency(budget.remainingAmount)}
               </p>
             </CardContent>
           </Card>
