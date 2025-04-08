@@ -9,16 +9,11 @@ import {
   ProfileFormValues,
 } from "@/schemas/profileFormSchema";
 import { FormFieldWrapper } from "./FormFieldWrapper";
-import { SelectFieldWrapper } from "./SelectFieldWrapper";
 import { AvatarSection } from "./AvatarSection";
 import { useTranslation } from "react-i18next";
-import LanguageSelector from "../LanguageSelector";
 import { Card } from "@/components/ui/card";
 // Currency options
-const currencyOptions = [
-  { value: "USD", label: "USD - US Dollar" },
-  { value: "VND", label: "VND - Vietnamese Dong" },
-];
+
 
 export function ProfileForm() {
   const { user } = useAuth();
@@ -29,7 +24,6 @@ export function ProfileForm() {
   const defaultValues: Partial<ProfileFormValues> = {
     username: user?.username || "",
     email: user?.email || "",
-    currency: user?.currency || "USD", // Use user's saved currency or default to USD
     fullname: user?.fullname || "",
   };
 
@@ -49,19 +43,11 @@ export function ProfileForm() {
         {/* Avatar Section */}
         <AvatarSection username={user?.username} />
 
-        {/* Language Selector */}
-        <div className="flex justify-end">
-          <div className="w-[180px]">
-            <p className="space-y-3 py-1">
-           
-              <LanguageSelector />
-            </p>
-          </div>
-        </div>
+       
 
         {/* Profile Form */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Form {...form} >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4">
             <div className="grid gap-4 md:grid-cols-2">
               {/* Username Field */}
               <FormFieldWrapper
@@ -87,14 +73,7 @@ export function ProfileForm() {
                 placeholder={t("common.fullname")}
               />
 
-              {/* Currency Field */}
-              <SelectFieldWrapper
-                control={form.control}
-                name="currency"
-                label={t("profile.currency")}
-                placeholder={t("profile.selectCurrency")}
-                options={currencyOptions}
-              />
+       
             </div>
 
             <div className="flex justify-end">

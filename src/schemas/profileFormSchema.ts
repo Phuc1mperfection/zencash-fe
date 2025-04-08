@@ -7,9 +7,7 @@ export const profileFormSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  currency: z.string({
-    required_error: "Please select a currency.",
-  }),
+ 
   fullname: z.string({
     required_error: "Please enter your full name.",
   }),

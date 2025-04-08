@@ -4,7 +4,6 @@ import { SignupData } from "@/types/SignupData";
 import { AuthResponse } from "@/types/AuthResponse";
 import authService from "@/services/authService";
 import { User } from "@/types/User";
-import i18n from "@/i18n";
 
 interface AuthContextType {
   user: User | null;
@@ -33,14 +32,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           email: currentUser.email,
           fullname: currentUser.fullname || "",
           currency: currentUser.currency || "",
-          language: currentUser.language || "",
         });
         setIsAuthenticated(true);
 
         // Khởi tạo ngôn ngữ từ user
-        if (currentUser.language) {
-          i18n.changeLanguage(currentUser.language);
-        }
+       
       }
     };
 
@@ -54,14 +50,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       email: response.email,
       fullname: response.fullname || "",
       currency: response.currency || "",
-      language: response.language || "",
     });
     setIsAuthenticated(true);
 
     // Cập nhật ngôn ngữ sau khi đăng nhập
-    if (response.language) {
-      i18n.changeLanguage(response.language);
-    }
+
 
     return response;
   };
@@ -78,14 +71,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       email: loginResponse.email,
       fullname: loginResponse.fullname || "",
       currency: loginResponse.currency || "",
-      language: loginResponse.language || "",
     });
     setIsAuthenticated(true);
 
     // Cập nhật ngôn ngữ sau khi đăng ký
-    if (loginResponse.language) {
-      i18n.changeLanguage(loginResponse.language);
-    }
+
 
     return loginResponse;
   };

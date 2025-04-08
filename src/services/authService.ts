@@ -25,7 +25,8 @@ const authService = {
           email: response.data.email,
           accessToken: response.data.accessToken,
           refreshToken: response.data.refreshToken,
-          fullname: response.data.fullname
+          fullname: response.data.fullname,
+          currency: response.data.currency,
         });
       }
       return response.data;
@@ -75,7 +76,6 @@ const authService = {
         refreshToken: localStorage.getItem("refreshToken") || "",
         fullname: user.fullname || "",
         currency: user.currency || "",
-        language: user.language || ""
       };
     }
     return null;
@@ -148,7 +148,6 @@ const authService = {
       email: data.email,
       fullname: data.fullname || "",
       currency: data.currency || "",
-      language: data.language || ""
     }));
   },
   
@@ -169,7 +168,6 @@ const authService = {
           refreshToken: localStorage.getItem("refreshToken") || "",
           fullname: response.data.fullname || localStorage.getItem("fullname") || "",
           currency: response.data.currency || localStorage.getItem("currency") || "",
-          language: response.data.language || localStorage.getItem("language") || ""
         });
         
         // Show success toast at service level
