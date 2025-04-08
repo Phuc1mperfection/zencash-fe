@@ -22,12 +22,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className }) => {
   return (
     <div className={`space-y-2 ${className}`}>
       <h3 className="text-base font-medium">{t("settings.language")}</h3>
- 
+
       <Select
         value={currentLanguage}
         onValueChange={(value) => changeLanguage(value)}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[240px]">
           <SelectValue placeholder={t("settings.selectLanguage")} />
         </SelectTrigger>
         <SelectContent>
