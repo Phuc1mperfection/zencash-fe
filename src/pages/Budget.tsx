@@ -1,3 +1,5 @@
+import  { useEffect, useState } from "react";
+import { getBudgets } from "@/services/budgetService";
 import {
   Card,
   CardContent,
@@ -5,8 +7,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { BudgetData } from "@/types/BudgetData";
 
 const Budget = () => {
+
+  const [budgets, setBudgets] = useState<BudgetData[]>([]);
+
+  useEffect(() => {
+    const fetchBudgets = async () => {
+      try {
+        const data = await getBudgets();
+        setBudgets(data);
+      } catch (error) {
+        console.error("Failed to fetch budgets", error);
+      }
+    };
+
+    fetchBudgets();
+  }, []);
+
   return (
     <div className="space-y-6">
       <div>
@@ -17,40 +36,20 @@ const Budget = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Monthly Budget</CardTitle>
-            <CardDescription>Your budget for this month</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$2,500</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Spent</CardTitle>
-            <CardDescription>Amount spent this month</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$1,200</div>
-            <p className="text-xs text-muted-foreground">48% of your budget</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Remaining</CardTitle>
-            <CardDescription>Amount left to spend</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$1,300</div>
-            <p className="text-xs text-muted-foreground">52% of your budget</p>
-          </CardContent>
-        </Card>
+        {budgets.map((budget) => (
+          <Card key={budget.id}>
+            <CardHeader>
+              <CardTitle>{budget.name}</CardTitle>
+              <CardDescription>Total Budget</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${budget.totalAmount}</div>
+              <p className="text-xs text-muted-foreground">
+                Remaining: ${budget.remainingAmount}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
