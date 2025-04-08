@@ -52,7 +52,8 @@
     "language": "Language",
     "currency": "Currency",
     "avatarSection.title": "Avatar",
-    "selectLanguage": "Select Language"
+    "selectLanguage": "Select Language",
+    "currencyChangeSuccess":" Currency changed successfully"
   },
   "appearance": {
     "title": "Appearance Settings",

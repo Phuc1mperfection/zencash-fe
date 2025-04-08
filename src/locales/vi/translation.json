@@ -52,7 +52,9 @@
     "security": "Bảo mật",
     "privacy": "Quyền riêng tư",
     "language": "Ngôn ngữ",
-    "currency": "Tiền tệ"
+    "currency": "Tiền tệ",
+    "currencyChangeSuccess":" Thay đổi tiền tệ thành công"
+
   },
   "sidebar": {
     "overview": "Tổng quan",
