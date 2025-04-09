@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileForm from "@/components/profile/ProfileForm";
-import SecuritySettings from "@/components/profile/SecuritySettings";
+import SecuritySettings from "@/components/settings/SecuritySettings";
 import { useAuth } from "@/hooks/use-Auth"; // Import useAuth
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +28,7 @@ const Profile = () => {
 
   return (
     // Use container and max-width for better layout on larger screens
-    <div className="container max-w-4xl mx-auto py-6 space-y-6">
+    <div className="container max-w-5xl mx-auto py-6 space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">   
       {t("profile.title")}
       </h1>

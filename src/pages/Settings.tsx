@@ -1,4 +1,4 @@
-import AppearanceSettings from "@/components/profile/AppearanceSettings";
+import AppearanceSettings from "@/components/settings/AppearanceSettings";
 import { useTranslation } from "react-i18next";
 
 
