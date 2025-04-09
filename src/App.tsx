@@ -10,7 +10,6 @@ import { Toaster } from "react-hot-toast";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -18,6 +17,7 @@ import Landing from "./pages/Landing";
 import useAutoRefreshToken from "./hooks/useAutoRefreshToken";
 import { useAuth } from "./hooks/use-Auth";
 import { ChatAssistant } from "./components/chat/ChatAssistant";
+import Sidebar from "./components/sidebar/Sidebar";
 
 function App() {
   // Tự động refresh token
