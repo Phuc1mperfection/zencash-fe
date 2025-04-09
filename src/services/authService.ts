@@ -15,7 +15,7 @@ const authService = {
       console.log('Making login request to:', `${API_URL}/auth/login`);
       console.log('Login request body:', JSON.stringify(credentials, null, 2));
       
-      const response = await axios.post(`${API_URL}/auth/login`, credentials);
+      const response = await api.post(`${API_URL}/auth/login`, credentials);
       console.log('Login response data:', response.data);
       
       if (response.data.accessToken) {
