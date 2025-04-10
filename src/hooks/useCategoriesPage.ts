@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { showToast } from '@/utils/toast';
+import { toast } from "react-hot-toast";
 import { CategoryResponse } from '@/types/CategoryResponse';
 import { BudgetData } from '@/types/BudgetData';
 
@@ -61,7 +61,7 @@ export const useCategoriesPage = () => {
       });
       setExpandedGroups(expanded);
     } catch (error) {
-      showToast.error('Failed to load category groups');
+      toast.error('Failed to load category groups');
       console.error('Error fetching category groups:', error);
     }
   };
@@ -85,7 +85,7 @@ export const useCategoriesPage = () => {
         [groupId]: categories,
       }));
     } catch (error) {
-      showToast.error(`Failed to load categories for group ${groupId}`);
+      toast.error(`Failed to load categories for group ${groupId}`);
       console.error(`Error fetching categories for group ${groupId}:`, error);
     }
   };
@@ -106,7 +106,7 @@ export const useCategoriesPage = () => {
   // Create a new category group
   const handleCreateGroup = async () => {
     if (!newGroupName.trim()) {
-      showToast.error('Group name cannot be empty');
+      toast.error('Group name cannot be empty');
       return;
     }
     
@@ -114,9 +114,9 @@ export const useCategoriesPage = () => {
       await createCategoryGroup(newGroupName);
       setNewGroupName('');
       fetchCategoryGroups();
-      showToast.success('Category group created successfully');
+      toast.success('Category group created successfully');
     } catch (error) {
-      showToast.error('Failed to create category group');
+      toast.error('Failed to create category group');
       console.error('Error creating category group:', error);
     }
   };
@@ -130,7 +130,7 @@ export const useCategoriesPage = () => {
   // Save edited category group
   const handleSaveGroupEdit = async (groupId: number) => {
     if (!editingGroupName.trim()) {
-      showToast.error('Group name cannot be empty');
+      toast.error('Group name cannot be empty');
       return;
     }
     
@@ -138,9 +138,9 @@ export const useCategoriesPage = () => {
       await updateCategoryGroup(groupId, editingGroupName);
       setEditingGroupId(null);
       fetchCategoryGroups();
-      showToast.success('Category group updated successfully');
+      toast.success('Category group updated successfully');
     } catch (error) {
-      showToast.error('Failed to update category group');
+      toast.error('Failed to update category group');
       console.error('Error updating category group:', error);
     }
   };
@@ -156,9 +156,9 @@ export const useCategoriesPage = () => {
       await deleteCategoryGroup(groupId);
       fetchCategoryGroups();
       setIsDeleteDialogOpen(null);
-      showToast.success('Category group deleted successfully');
+      toast.success('Category group deleted successfully');
     } catch (error) {
-      showToast.error('Failed to delete category group');
+      toast.error('Failed to delete category group');
       console.error('Error deleting category group:', error);
     }
   };
@@ -176,7 +176,7 @@ export const useCategoriesPage = () => {
   // Create a new category
   const handleCreateCategory = async (groupId: number) => {
     if (!newCategoryName.trim()) {
-      showToast.error('Category name cannot be empty');
+      toast.error('Category name cannot be empty');
       return;
     }
     
@@ -196,10 +196,10 @@ export const useCategoriesPage = () => {
       
       setIsAddingCategory(null);
       fetchCategories(groupId);
-      showToast.success('Category created successfully');
+      toast.success('Category created successfully');
     } catch (error) {
       console.error('Error creating category:', error);
-      showToast.error('Failed to create category');
+      toast.error('Failed to create category');
     }
   };
 
@@ -215,7 +215,7 @@ export const useCategoriesPage = () => {
     if (!editingCategory) return;
     
     if (!editingCategory.name.trim()) {
-      showToast.error('Category name cannot be empty');
+      toast.error('Category name cannot be empty');
       return;
     }
     
@@ -244,9 +244,9 @@ export const useCategoriesPage = () => {
       
       fetchCategories(editingCategory.categoryGroupId);
       setEditingCategory(null);
-      showToast.success('Category updated successfully');
+      toast.success('Category updated successfully');
     } catch (error) {
-      showToast.error('Failed to update category');
+      toast.error('Failed to update category');
       console.error('Error updating category:', error);
     }
   };
@@ -279,9 +279,9 @@ export const useCategoriesPage = () => {
         ),
       }));
       
-      showToast.success(`Category ${updatedCategory.isDefault ? 'marked as default' : 'unmarked as default'}`);
+      toast.success(`Category ${updatedCategory.isDefault ? 'marked as default' : 'unmarked as default'}`);
     } catch (error) {
-      showToast.error('Failed to update category');
+      toast.error('Failed to update category');
       console.error('Error updating category:', error);
     }
   };
@@ -292,9 +292,9 @@ export const useCategoriesPage = () => {
       await deleteCategory(categoryId);
       fetchCategories(groupId);
       setIsDeleteDialogOpen(null);
-      showToast.success('Category deleted successfully');
+      toast.success('Category deleted successfully');
     } catch (error) {
-      showToast.error('Failed to delete category');
+      toast.error('Failed to delete category');
       console.error('Error deleting category:', error);
     }
   };

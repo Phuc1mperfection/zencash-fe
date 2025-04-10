@@ -10,3 +10,16 @@ export function formatCurrency(amount: number): string {
 
   return amount.toString();
 }
+
+export function getCurrencySymbol(): string {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const currency = user.currency || "VND";
+
+  if (currency === "VND") {
+    return "₫";
+  } else if (currency === "USD") {
+    return "$";
+  }
+
+  return "";
+}
