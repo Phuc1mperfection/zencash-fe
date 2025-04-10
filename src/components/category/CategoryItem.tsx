@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pencil, Trash2, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -13,7 +14,6 @@ import {
 
 import { CategoryResponse } from "@/types/CategoryResponse";
 import { BudgetData } from "@/types/BudgetData";
-
 interface CategoryItemProps {
   category: CategoryResponse;
   budgets: BudgetData[];
@@ -43,6 +43,26 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
 }) => {
   const isEditing = editingCategory?.id === category.id;
 
+  useEffect(() => {
+    if (isEditing) {
+      console.log("Editing category with budgetId:", editingCategory?.budgetId);
+      console.log("Available budgets:", budgets);
+    }
+  }, [isEditing, editingCategory, budgets]);
+
+  // Tìm budget tương ứng với category
+  const matchedBudget = category.budgetId
+    ? budgets.find((b) => b.id.toString() === category.budgetId?.toString())
+    : null;
+
+  const handleCancelEdit = () => {
+    console.log("Cancel edit button clicked");
+    console.log("onCancelEdit function exists:", !!onCancelEdit);
+    if (onCancelEdit) {
+      onCancelEdit();
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-2 border rounded-md bg-card">
       {isEditing && editingCategory ? (
@@ -55,11 +75,23 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
           </div>
           <div>
             <Select
-              value={editingCategory.budgetId || "none"}
+              value={
+                editingCategory.budgetId
+                  ? editingCategory.budgetId.toString()
+                  : "none"
+              }
               onValueChange={(value) => onEditBudgetChange?.(value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select budget" />
+                <SelectValue placeholder="Select budget">
+                  {editingCategory.budgetId
+                    ? budgets.find(
+                        (b) =>
+                          b.id.toString() ===
+                          editingCategory.budgetId?.toString()
+                      )?.name || "Select budget"
+                    : "None"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">None</SelectItem>
@@ -81,7 +113,7 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
             <span>Default</span>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={onCancelEdit}>
+            <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
               <X className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={onSaveEdit}>
@@ -98,10 +130,14 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
             />
             <span>{category.name}</span>
             {category.budgetId && (
-              <span className="text-xs bg-primary/20 text-primary-foreground py-1 px-2 rounded-full">
-                {budgets.find((b) => b.id.toString() === category.budgetId)
-                  ?.name || "Budget"}
-              </span>
+              <Badge
+                variant="secondary"
+                className="text-xs bg-primary/20 text-primary-foreground py-1 px-2 rounded-full"
+              >
+                {matchedBudget
+                  ? matchedBudget.name
+                  : `Budget ID: ${category.budgetId}`}
+              </Badge>
             )}
           </div>
           <div className="flex gap-2">

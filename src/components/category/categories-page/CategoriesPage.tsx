@@ -1,4 +1,4 @@
-import React from "react";
+import {FC} from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { CategoryGroupContainer } from "./CategoryGroupContainer";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { useCategoriesPage } from "@/hooks/useCategoriesPage";
 
-export const CategoriesPage: React.FC = () => {
+export const CategoriesPage: FC = () => {
   const {
     // State
     categoryGroups,

@@ -89,7 +89,6 @@ export const useCategoriesPage = () => {
       console.error(`Error fetching categories for group ${groupId}:`, error);
     }
   };
-
   // Toggle group expansion
   const toggleGroupExpansion = (groupId: number) => {
     const newState = !expandedGroups[groupId];
@@ -205,7 +204,9 @@ export const useCategoriesPage = () => {
   };
 
   // Start editing a category
-  const handleEditCategory = (category: CategoryResponse) => {
+  const handleEditCategory = (category: CategoryResponse | null) => {
+    // Always set the editingCategory to whatever was passed in
+    // This allows null to be passed to cancel editing
     setEditingCategory(category);
   };
 

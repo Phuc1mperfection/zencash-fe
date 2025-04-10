@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import  {FC, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CategoryGroup } from "../CategoryGroup";
 import { CategoryResponse } from "@/types/CategoryResponse";
@@ -28,7 +28,7 @@ interface CategoryGroupContainerProps {
   onNewCategoryNameChange: (name: string) => void;
   onNewCategoryDefaultChange: (isDefault: boolean) => void;
   onBudgetIdChange: (budgetId: string) => void;
-  onEditCategory: (category: CategoryResponse) => void;
+  onEditCategory: (category: CategoryResponse | null) => void;
   onToggleCategoryDefault: (category: CategoryResponse) => void;
   onDeleteCategory: (id: number) => void;
   onSaveCategory: () => void;
@@ -37,7 +37,7 @@ interface CategoryGroupContainerProps {
   onEditCategoryBudgetChange: (budgetId: string) => void;
 }
 
-export const CategoryGroupContainer: React.FC<CategoryGroupContainerProps> =
+export const CategoryGroupContainer: FC<CategoryGroupContainerProps> =
   memo(
     ({
       categoryGroups,

@@ -51,7 +51,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             />
           </div>
           <div>
-            <p className="mb-2 text-sm font-medium">Budget (Optional)</p>
+            <p className="mb-2 text-sm font-medium">Budget</p>
             <Select value={selectedBudgetId} onValueChange={onBudgetChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select budget" />
