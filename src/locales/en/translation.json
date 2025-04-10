@@ -70,7 +70,8 @@
     "invoices": "Invoices",
     "settings": "Settings",
     "profile": "Profile",
-    "budget": "Budget"
+    "budget": "Budget",
+    "categories": "Categories"
   },
   "errors": {
     "required": "This field is required",

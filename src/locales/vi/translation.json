@@ -63,7 +63,8 @@
     "invoices": "Hóa đơn",
     "settings": "Cài đặt",
     "profile": "Hồ sơ",
-    "budget": "Ngân sách"
+    "budget": "Ngân sách",
+    "categories": "Danh mục"
   },
   "errors": {
     "required": "Trường này là bắt buộc",
