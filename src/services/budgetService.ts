@@ -10,8 +10,13 @@ export const getBudgets = async () => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createBudget = async (budgetData: any) => {
+interface BudgetData {
+  name: string;
+  amount: number;
+  category: string;
+}
+
+export const createBudget = async (budgetData: BudgetData) => {
   try {
     const response = await api.post("/budgets", budgetData);
     return response.data;

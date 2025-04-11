@@ -8,9 +8,9 @@ export function useTheme(defaultTheme: Theme = 'system', storageKey: string = 'v
     try {
       const storedTheme = localStorage.getItem(storageKey);
       return (storedTheme as Theme) || defaultTheme;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      // Ignore localStorage errors
+      console.error('Failed to read theme from localStorage', e);
+      // Nếu có lỗi khi đọc localStorage, sử dụng theme mặc định
       return defaultTheme;
     }
   });

@@ -1,47 +1,49 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { createBudget, getBudgets } from "@/services/budgetService";
+import { getCategoriesByBudget } from "@/services/categoryService";
 import { toast } from "react-hot-toast";
-
-// Define the budget data interface
-export interface BudgetFormData {
-  name: string;
-  amount: number;
-}
+import { BudgetData } from "@/types/BudgetData";
 
 export const useBudget = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [budgets, setBudgets] = useState<BudgetFormData[]>([]);
+  const [budgetsWithCategories, setBudgetsWithCategories] = useState<BudgetData[]>([]);
 
-  // Fetch all budgets
   const fetchBudgets = async () => {
     setIsLoading(true);
     try {
       const budgetData = await getBudgets();
-      setBudgets(budgetData);
       return budgetData;
     } catch (error) {
       console.error("Failed to fetch budgets:", error);
-
       return [];
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Create a new budget
-  const handleCreateBudget = async (data: BudgetFormData) => {
+  const loadBudgetsWithCategories = useCallback(async () => {
+    try {
+      const budgetData = await fetchBudgets();
+
+      const budgetsWithCats = await Promise.all(
+        budgetData.map(async (budget: BudgetData) => {
+          const categories = await getCategoriesByBudget(budget.id);
+          return { ...budget, categories };
+        })
+      );
+
+      setBudgetsWithCategories(budgetsWithCats);
+    } catch (error) {
+      console.error("Failed to fetch budgets with categories", error);
+    }
+  }, []); // <- useCallback để không đổi giữa các render
+
+  const handleCreateBudget = async (data: { name: string; amount: number }) => {
     setIsLoading(true);
     try {
-      // Format the data according to API expectations
-      const budgetData = {
-        name: data.name,
-        amount: data.amount,
-      };
-      console.log("Creating budget with data:", budgetData);
-      const createdBudget = await createBudget(budgetData);
-      // Refresh budgets list
-      await fetchBudgets();
-      toast.success("Budget created successfully!");      
+      const createdBudget = await createBudget({ ...data, category: "default" });
+      await loadBudgetsWithCategories();
+      toast.success("Budget created successfully!");
       return createdBudget;
     } catch (error) {
       console.error("Failed to create budget:", error);
@@ -52,10 +54,32 @@ export const useBudget = () => {
     }
   };
 
+  const calculateBudgetStats = (budget: BudgetData) => {
+    const spent = budget.totalAmount - budget.remainingAmount;
+    const percentage =
+      budget.totalAmount > 0
+        ? Math.round((spent / budget.totalAmount) * 100)
+        : 0;
+
+    return {
+      spent,
+      left: budget.remainingAmount,
+      percentage,
+    };
+  };
+
+  const getProgressColor = (percentage: number): string => {
+    if (percentage >= 90) return "bg-destructive";
+    if (percentage >= 75) return "bg-amber-500";
+    return "bg-zen-green";
+  };
+
   return {
     isLoading,
-    budgets,
-    fetchBudgets,
-    handleCreateBudget
+    budgetsWithCategories,
+    loadBudgetsWithCategories,
+    calculateBudgetStats,
+    getProgressColor,
+    handleCreateBudget,
   };
 };

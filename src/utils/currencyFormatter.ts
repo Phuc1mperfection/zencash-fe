@@ -7,7 +7,7 @@ export function formatCurrency(amount: number): string {
   } else if (currency === "USD") {
     return `$${amount.toLocaleString("en-US")}`;
   }
-
+  
   return amount.toString();
 }
 

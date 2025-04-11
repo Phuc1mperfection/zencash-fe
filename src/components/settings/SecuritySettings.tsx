@@ -10,12 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; // Use Label component
 import { Switch } from "@/components/ui/switch";
 import { FormEvent, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import authService from "@/services/authService";
 
 export function SecuritySettings() {
-  const { toast } = useToast();
   const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -52,16 +50,15 @@ export function SecuritySettings() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleTwoFactorToggle = (checked: boolean) => {
-    // --- TODO: Add actual 2FA enable/disable logic ---
-    console.log("2FA toggled:", checked);
-    toast({
-      title: `Two-Factor Authentication ${checked ? "Enabled" : "Disabled"}`,
-      description: `(Simulation)`,
-    });
-    // setIsTwoFactorEnabled(checked); // Update state if needed
-  };
+  // const handleTwoFactorToggle = (checked: boolean) => {
+  //   // --- TODO: Add actual 2FA enable/disable logic ---
+  //   console.log("2FA toggled:", checked);
+  //   toast({
+  //     title: `Two-Factor Authentication ${checked ? "Enabled" : "Disabled"}`,
+  //     description: `(Simulation)`,
+  //   });
+  //   // setIsTwoFactorEnabled(checked); // Update state if needed
+  // };
 
   return (
     <Card>
