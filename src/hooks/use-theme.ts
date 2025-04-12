@@ -39,9 +39,9 @@ export function useTheme(defaultTheme: Theme = 'system', storageKey: string = 'v
     // Lưu theme vào localStorage, bọc bằng try-catch để an toàn
     try {
       localStorage.setItem(storageKey, newTheme);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       console.error('Failed to save theme to localStorage');
+      console.error(e);
     }
   }, [storageKey]);
 

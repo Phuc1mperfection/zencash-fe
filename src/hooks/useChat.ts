@@ -29,12 +29,12 @@ export function useChat() {
             ...prev,
             { sender: "bot", content: aiResponse, timestamp: new Date().getTime() },
           ]);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
           setMessages((prev) => [
             ...prev,
             { sender: "bot", content: "Error: Unable to fetch response.", timestamp: new Date().getTime() },
           ]);
+          console.error("Error sending message:", error);
         } finally {
           setIsLoading(false);
         }

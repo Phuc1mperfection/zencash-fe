@@ -95,8 +95,9 @@ const authService = {
       const decoded: any = jwtDecode(token);
       const currentTime = Date.now() / 1000;
       return decoded.exp < currentTime;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
+      console.error('Error decoding token:', error);
+      // Nếu có lỗi trong việc giải mã token, coi như token đã hết hạn
       return true;
     }
   },
