@@ -43,7 +43,7 @@ function AppContent() {
   const showSidebar = isAuthenticated && isDashboardRoute;
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-bl from-[#f0ebe3]  via-emerald-500 via-90% to-emerald-900  dark:bg-gradient-to-b dark:from-[#001e2b] dark:to-[#023430]">
+    <div className="relative min-h-screen w-full bg-gradient-to-bl from-[#f0ebe3]  via-emerald-500 via-90% to-emerald-300  dark:bg-gradient-to-b dark:from-[#001e2b] dark:to-[#023430]">
       <div className="flex">
         {showSidebar && (
           <Sidebar
