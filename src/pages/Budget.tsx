@@ -45,14 +45,18 @@ const Budget = () => {
 
   // Handle edit budget click
   const handleEditClick = useCallback((budget: BudgetData) => {
-    setSelectedBudget(budget);
-    setIsEditBudgetOpen(true);
+    setTimeout(() => {
+      setSelectedBudget(budget);
+      setIsEditBudgetOpen(true);
+    }, 0);
   }, []);
 
   // Handle delete budget click
   const handleDeleteClick = useCallback((budget: BudgetData) => {
-    setSelectedBudget(budget);
-    setIsDeleteDialogOpen(true);
+    setTimeout(() => {
+      setSelectedBudget(budget);
+      setIsEditBudgetOpen(true);
+    }, 0);
   }, []);
 
   // Handle confirmed budget deletion
@@ -60,9 +64,11 @@ const Budget = () => {
     if (selectedBudget) {
       const success = await handleDeleteBudget(selectedBudget.id);
       if (success) {
-        setIsDeleteDialogOpen(false);
-        setSelectedBudget(null);
-        refreshBudgets();
+        setTimeout(() => {
+          setIsDeleteDialogOpen(false);
+          setSelectedBudget(null);
+          refreshBudgets();
+        }, 0);
       }
     }
   }, [selectedBudget, handleDeleteBudget, refreshBudgets]);
