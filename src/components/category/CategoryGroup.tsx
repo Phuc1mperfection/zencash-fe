@@ -183,7 +183,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
                   No categories in this group
                 </p>
               ) : (
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-2 break-all">
                   {categories.map((category) => (
                     <CategoryItem
                       key={category.id}
