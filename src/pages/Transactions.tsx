@@ -224,7 +224,7 @@ export const Transactions = () => {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Popover>
+              <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="h-10 gap-2">
                     <Filter className="h-4 w-4" />
@@ -303,7 +303,7 @@ export const Transactions = () => {
 
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Date</label>
-                      <Popover>
+                      <Popover modal={true}>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"

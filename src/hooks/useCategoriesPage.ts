@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useCallback } from 'react';
 import { toast } from "react-hot-toast";
 import { CategoryResponse } from '@/types/CategoryResponse';
 import { BudgetData } from '@/types/BudgetData';
@@ -49,7 +49,7 @@ export const useCategoriesPage = () => {
   }, []);
 
   // Fetch all category groups
-  const fetchCategoryGroups = async () => {
+  const fetchCategoryGroups = useCallback(async () => {
     try {
       const groups = await getCategoryGroups();
       setCategoryGroups(groups);
@@ -64,7 +64,7 @@ export const useCategoriesPage = () => {
       toast.error('Failed to load category groups');
       console.error('Error fetching category groups:', error);
     }
-  };
+  }, [expandedGroups]);
 
   // Fetch budgets for dropdown
   const fetchBudgets = async () => {
@@ -77,7 +77,7 @@ export const useCategoriesPage = () => {
   };
 
   // Fetch categories for a specific group
-  const fetchCategories = async (groupId: number) => {
+  const fetchCategories = async (groupId: number,) => {
     try {
       const categories = await getCategoriesByGroupId(groupId);
       setGroupCategories(prev => ({

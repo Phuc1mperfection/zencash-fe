@@ -1,6 +1,5 @@
 import axios from "axios";
 import authService from "./authService";
-import toast from "react-hot-toast";
 
 const API_URL = "http://localhost:8080/api";
 
@@ -46,8 +45,6 @@ export const createTransaction = async (transaction: TransactionRequest): Promis
     transaction, 
     getAuthHeader()
   );
-
-  toast.success("Transaction created successfully");
   return response.data;
 };
 
@@ -59,10 +56,8 @@ export const updateTransaction = async (id: number, transaction: TransactionRequ
     getAuthHeader()
   );
   if (response.status !== 200) {
-    toast.error("Failed to update transaction");
     throw new Error("Failed to update transaction");
   }
-  toast.success("Transaction updated successfully");
   return response.data;
 };
 

@@ -32,14 +32,7 @@ import { TransactionForm } from "./TransactionForm";
 import { getCategoriesByBudget } from "@/services/categoryService";
 import { CategoryResponse } from "@/types/CategoryResponse";
 import { formatCurrency } from "@/utils/currencyFormatter";
-
-interface TransactionsListProps {
-  transactions: TransactionResponse[];
-  limit?: number;
-  onEdit?: (transaction: TransactionResponse) => void;
-  onDelete?: (transactionId: number) => void;
-  loading?: boolean;
-}
+import {TransactionsListProps} from "@/types/TransactionsListProps";
 
 export const TransactionsList = ({
   transactions,
@@ -160,16 +153,16 @@ setTimeout(() => {
   };
 
   // Display loading or empty state
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-8">
-        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-zen-green"></div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Loading transactions...
-        </p>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center py-8">
+  //       <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-zen-green"></div>
+  //       <p className="mt-2 text-sm text-muted-foreground">
+  //         Loading transactions...
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   if (!loading && displayedTransactions.length === 0) {
     return (
