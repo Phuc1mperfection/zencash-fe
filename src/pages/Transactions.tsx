@@ -1,63 +1,40 @@
-import { useState, useEffect, useMemo } from "react";
-import {
-  Calendar as CalendarIcon,
-  Filter,
-  Plus,
-  Search,
-  ArrowUpDown,
-  X,
-  FileText,
-  Loader2,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, ArrowUpDown, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format, parseISO } from "date-fns";
-import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TransactionsList from "@/components/transactions/TransactionsList";
-import { Badge } from "@/components/ui/badge";
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { InvoiceRecognition } from "@/components/transactions/InvoiceRecognition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useBudget } from "@/hooks/useBudget";
-// Removed category import
-
-type FilterType = {
-  date?: Date;
-  // Removed categoryId
-  budgetId?: number;
-  type?: "all" | "INCOME" | "EXPENSE";
-};
+import { TransactionFilters } from "@/components/transactions/TransactionFilters";
+import { TransactionSearch } from "@/components/transactions/TransactionSearch";
+import { TransactionTypeSelector } from "@/components/transactions/TransactionTypeSelector";
+import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 
 export const Transactions = () => {
   const { transactions, loading, fetchTransactions, deleteTransaction } =
     useTransactions();
   const { budgets, fetchBudgets, isLoading: budgetsLoading } = useBudget();
-  // Removed categories related hooks
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filters, setFilters] = useState<FilterType>({
-    type: "all",
-  });
-  const [date, setDate] = useState<Date>();
   const [isTransactionFormOpen, setIsTransactionFormOpen] = useState(false);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc"); // Default newest first
 
-  // Fetch transactions and budgets on component mount - removed categories
+  // Sử dụng hook useTransactionFilters mới
+  const {
+    searchQuery,
+    setSearchQuery,
+    filters,
+    setFilters,
+    date,
+    sortDirection,
+    sortedTransactions,
+    handleDateSelect,
+    clearFilters,
+    toggleSortDirection,
+  } = useTransactionFilters(transactions || []);
+
+  // Fetch transactions and budgets on component mount
   useEffect(() => {
     fetchBudgets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,72 +56,6 @@ export const Transactions = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.budgetId]); // Chỉ phụ thuộc vào filters.budgetId
-
-  const filteredTransactions = useMemo(() => {
-    if (!transactions) return [];
-
-    return transactions.filter((transaction) => {
-      // Search filter
-      if (
-        searchQuery &&
-        transaction.note &&
-        !transaction.note.toLowerCase().includes(searchQuery.toLowerCase())
-      ) {
-        return false;
-      }
-
-      // Removed category filter
-
-      // Transaction type filter
-      if (filters.type === "INCOME" && transaction.type !== "INCOME") {
-        return false;
-      }
-      if (filters.type === "EXPENSE" && transaction.type !== "EXPENSE") {
-        return false;
-      }
-
-      // Date filter
-      if (filters.date && transaction.date) {
-        const txDate = format(parseISO(transaction.date), "yyyy-MM-dd");
-        const filterDate = format(filters.date, "yyyy-MM-dd");
-        if (txDate !== filterDate) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [transactions, searchQuery, filters]);
-
-  // Sort transactions by date
-  const sortedTransactions = useMemo(() => {
-    if (!filteredTransactions || filteredTransactions.length === 0) return [];
-
-    return [...filteredTransactions].sort((a, b) => {
-      if (!a.date || !b.date) return 0;
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
-    });
-  }, [filteredTransactions, sortDirection]);
-
-  const handleDateSelect = (date?: Date) => {
-    setDate(date);
-    setFilters((prev) => ({ ...prev, date }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      type: "all",
-      budgetId: budgets && budgets.length > 0 ? budgets[0].id : undefined,
-    });
-    setDate(undefined);
-    setSearchQuery("");
-  };
-
-  const toggleSortDirection = () => {
-    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
-  };
 
   const handleDelete = async (transactionId: number) => {
     await deleteTransaction(transactionId);
@@ -186,6 +97,13 @@ export const Transactions = () => {
     }
   };
 
+  // Handle clear filters with default budget
+  const handleClearFilters = () => {
+    const defaultBudgetId =
+      budgets && budgets.length > 0 ? budgets[0].id : undefined;
+    clearFilters(defaultBudgetId);
+  };
+
   const isLoading = loading || budgetsLoading;
 
   return (
@@ -220,153 +138,36 @@ export const Transactions = () => {
 
         <TabsContent value="list" className="space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search transactions..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+            {/* Sử dụng component TransactionSearch */}
+            <TransactionSearch
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              className="flex-1"
+            />
 
             <div className="flex flex-wrap gap-2">
-              <Popover modal={true}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="h-10 gap-2">
-                    <Filter className="h-4 w-4" />
-                    <span className="hidden sm:inline">Filters</span>
-                    {filters.date && (
-                      <Badge
-                        variant="secondary"
-                        className="h-5 px-1 rounded-full"
-                      >
-                        1
-                      </Badge>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-4">
-                    <h4 className="font-medium">Filter Transactions</h4>
+              {/* Sử dụng component TransactionFilters */}
+              <TransactionFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                date={date}
+                onDateSelect={handleDateSelect}
+                onClearFilters={handleClearFilters}
+                budgets={budgets}
+                isLoading={isLoading}
+              />
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Budget</label>
-                      <Select
-                        value={filters.budgetId?.toString() || ""}
-                        onValueChange={(value) =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            budgetId:
-                              value.toString() === "all" ? undefined : Number(value),
-                          }))
-                        }
-                        disabled={isLoading || !budgets || budgets.length === 0}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select budget" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Budgets</SelectItem>
-                          {budgets &&
-                            budgets.map((budget) => (
-                              <SelectItem
-                                key={budget.id}
-                                value={budget.id.toString()}
-                              >
-                                {budget.name}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">
-                        Transaction Type
-                      </label>
-                      <Select
-                        value={filters.type}
-                        onValueChange={(value) =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            type: value as unknown as "all" | "INCOME" | "EXPENSE",
-                          }))
-                        }
-                        disabled={isLoading}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Transactions</SelectItem>
-                          <SelectItem value="INCOME">Income Only</SelectItem>
-                          <SelectItem value="EXPENSE">Expenses Only</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Removed category filter section */}
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Date</label>
-                      <Popover modal={true}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !date && "text-muted-foreground"
-                            )}
-                            disabled={isLoading}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {date ? format(date, "PPP") : "Pick a date"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={handleDateSelect}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={clearFilters}
-                      disabled={isLoading}
-                    >
-                      <X className="mr-2 h-4 w-4" />
-                      Clear Filters
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              <Select
-                value={filters.type}
+              {/* Sử dụng component TransactionTypeSelector */}
+              <TransactionTypeSelector
+                value={filters.type || "all"}
                 onValueChange={(value) =>
                   setFilters((prev) => ({
                     ...prev,
-                    type: value as unknown as "all" | "INCOME" | "EXPENSE",
+                    type: value as "all" | "INCOME" | "EXPENSE",
                   }))
                 }
                 disabled={isLoading}
-              >
-                <SelectTrigger className="h-10 w-[180px]">
-                  <SelectValue placeholder="All Transactions" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Transactions</SelectItem>
-                  <SelectItem value="INCOME">Income Only</SelectItem>
-                  <SelectItem value="EXPENSE">Expenses Only</SelectItem>
-                </SelectContent>
-              </Select>
+              />
 
               <Button
                 variant="outline"
