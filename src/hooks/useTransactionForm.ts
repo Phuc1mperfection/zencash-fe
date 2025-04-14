@@ -89,7 +89,7 @@ export const useTransactionForm = ({
         if (data && data.length > 0 && !form.getValues().categoryId) {
           // Try to find a default category first
           const defaultCategory = data.find(
-            (cat: CategoryResponse) => cat.isDefault
+            (cat: CategoryResponse) => cat.defaultCat === true
           );
           if (defaultCategory) {
             form.setValue("categoryId", defaultCategory.id);
@@ -128,14 +128,17 @@ export const useTransactionForm = ({
       if (editMode && transactionId) {
         // Update existing transaction
         await updateTransaction(transactionId, request);
-        await fetchTransactions(); // Refresh transactions list after editing
       } else {
         // Create new transaction
         await addTransaction(request);
       }
-
+      
       // Reset form and close dialog on success
       form.reset(defaultTransactionValues);
+      
+      // Refresh global transactions data
+      // This is an extra call to ensure UI synchronization
+      fetchTransactions();
       
       // Call success callback if provided
       if (onSuccess) {
@@ -148,13 +151,11 @@ export const useTransactionForm = ({
       }
 
       // Show success message
-        toast.success(
-            editMode
-            ? "Transaction updated successfully!"
-            : "Transaction added successfully!"
-        );
-
-      
+      toast.success(
+        editMode
+          ? "Transaction updated successfully!"
+          : "Transaction added successfully!"
+      );
     } catch (error) {
       console.error("Transaction submission error:", error);
       toast.error(

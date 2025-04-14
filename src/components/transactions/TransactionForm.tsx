@@ -1,14 +1,13 @@
 import { TransactionFormValues } from "@/schemas/transactionFormSchema";
 import { TransactionFormMain } from "./TransactionFormMain";
 
-
 interface TransactionFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   prefillData?: Partial<TransactionFormValues>;
   editMode?: boolean;
   transactionId?: number;
-  onEditSuccess?: () => void; // Maintain backward compatibility
+  onEditSuccess?: () => void; // Callback after successful edit or add
 }
 
 export function TransactionForm({
@@ -26,7 +25,7 @@ export function TransactionForm({
       prefillData={prefillData}
       editMode={editMode}
       transactionId={transactionId}
-      onSuccess={onEditSuccess}
+      onSuccess={onEditSuccess} // Use for both edit and add operations
     />
   );
 }

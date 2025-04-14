@@ -179,6 +179,13 @@ export const Transactions = () => {
     }
   };
 
+  const refreshTransactions = async () => {
+    console.log("Refreshing transactions after add/edit...");
+    if (filters.budgetId) {
+      await fetchTransactions(filters.budgetId);
+    }
+  };
+
   const isLoading = loading || budgetsLoading;
 
   return (
@@ -251,7 +258,7 @@ export const Transactions = () => {
                           setFilters((prev) => ({
                             ...prev,
                             budgetId:
-                              value === "all" ? undefined : Number(value),
+                              value.toString() === "all" ? undefined : Number(value),
                           }))
                         }
                         disabled={isLoading || !budgets || budgets.length === 0}
@@ -283,7 +290,7 @@ export const Transactions = () => {
                         onValueChange={(value) =>
                           setFilters((prev) => ({
                             ...prev,
-                            type: value as "all" | "INCOME" | "EXPENSE",
+                            type: value as unknown as "all" | "INCOME" | "EXPENSE",
                           }))
                         }
                         disabled={isLoading}
@@ -346,7 +353,7 @@ export const Transactions = () => {
                 onValueChange={(value) =>
                   setFilters((prev) => ({
                     ...prev,
-                    type: value as "all" | "INCOME" | "EXPENSE",
+                    type: value as unknown as "all" | "INCOME" | "EXPENSE",
                   }))
                 }
                 disabled={isLoading}
@@ -407,6 +414,7 @@ export const Transactions = () => {
       <TransactionForm
         open={isTransactionFormOpen}
         onOpenChange={handleCloseTransactionForm}
+        onEditSuccess={refreshTransactions}
       />
     </div>
   );
