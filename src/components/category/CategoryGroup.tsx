@@ -35,6 +35,7 @@ interface CategoryGroupProps {
   editingGroupName: string;
   isAddingCategory: number | null;
   newCategoryName: string;
+  newCategoryIcon: string;
   newCategoryIsDefault: boolean;
   selectedBudgetId: string;
   onGroupNameChange: (name: string) => void;
@@ -42,11 +43,13 @@ interface CategoryGroupProps {
   onCancelEdit: () => void;
   onCreateCategory: (groupId: number) => void;
   onNewCategoryNameChange: (name: string) => void;
+  onNewCategoryIconChange: (icon: string) => void;
   onNewCategoryDefaultChange: (isDefault: boolean) => void;
   onBudgetIdChange: (budgetId: number) => void;
   onEditCategory: (category: CategoryResponse | null) => void;
   onSaveCategory: () => void;
   onEditCategoryNameChange: (name: string) => void;
+  onEditCategoryIconChange: (icon: string) => void;
   onEditCategoryDefaultChange: (isDefault: boolean) => void;
   onEditCategoryBudgetChange: (budgetId: number) => void;
   onToggleCategoryDefault: (category: CategoryResponse) => void;
