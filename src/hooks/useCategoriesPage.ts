@@ -1,4 +1,4 @@
-import { useState, useEffect,useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from "react-hot-toast";
 import { CategoryResponse } from '@/types/CategoryResponse';
 import { BudgetData } from '@/types/BudgetData';
@@ -19,6 +19,7 @@ import { getBudgets } from '@/services/budgetService';
 export interface CategoryGroupType {
   id: number;
   name: string;
+  budgetId?: number;
 }
 
 export interface DeleteDialogState {
@@ -36,22 +37,45 @@ export const useCategoriesPage = () => {
   const [editingGroupName, setEditingGroupName] = useState('');
   const [isAddingCategory, setIsAddingCategory] = useState<number | null>(null);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryIcon, setNewCategoryIcon] = useState<string>('');
   const [newCategoryIsDefault, setNewCategoryIsDefault] = useState(false);
-  const [selectedBudgetId, setSelectedBudgetId] = useState<string>('');
+  const [selectedBudgetId, setSelectedBudgetId] = useState<number | undefined>(undefined);
+  const [activeBudgetId, setActiveBudgetId] = useState<number>(1); // Default to first budget initially
   const [budgets, setBudgets] = useState<BudgetData[]>([]);
   const [editingCategory, setEditingCategory] = useState<CategoryResponse | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<DeleteDialogState | null>(null);
-  
+  const fetchBudgets = async () => {
+    try {
+      const budgetData = await getBudgets();
+      setBudgets(budgetData);
+      
+      // Set the active budget to the first one if available
+      if (budgetData.length > 0 && !activeBudgetId) {
+        setActiveBudgetId(budgetData[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching budgets:', error);
+    }
+  };
   // Load category groups on component mount
   useEffect(() => {
-    fetchCategoryGroups();
     fetchBudgets();
   }, []);
 
-  // Fetch all category groups
-  const fetchCategoryGroups = useCallback(async () => {
+  // Fetch category groups whenever active budget changes
+  useEffect(() => {
+    if (activeBudgetId) {
+      fetchCategoryGroups(activeBudgetId);
+    }
+  }, [activeBudgetId]);
+
+  // Fetch budgets for dropdown
+
+
+  // Fetch all category groups for a specific budget
+  const fetchCategoryGroups = useCallback(async (budgetId: number) => {
     try {
-      const groups = await getCategoryGroups();
+      const groups = await getCategoryGroups(budgetId);
       setCategoryGroups(groups);
       
       // Initialize expanded state for each group
@@ -66,18 +90,8 @@ export const useCategoriesPage = () => {
     }
   }, [expandedGroups]);
 
-  // Fetch budgets for dropdown
-  const fetchBudgets = async () => {
-    try {
-      const budgetData = await getBudgets();
-      setBudgets(budgetData);
-    } catch (error) {
-      console.error('Error fetching budgets:', error);
-    }
-  };
-
   // Fetch categories for a specific group
-  const fetchCategories = async (groupId: number,) => {
+  const fetchCategories = async (groupId: number) => {
     try {
       const categories = await getCategoriesByGroupId(groupId);
       setGroupCategories(prev => ({
@@ -89,6 +103,7 @@ export const useCategoriesPage = () => {
       console.error(`Error fetching categories for group ${groupId}:`, error);
     }
   };
+  
   // Toggle group expansion
   const toggleGroupExpansion = (groupId: number) => {
     const newState = !expandedGroups[groupId];
@@ -111,9 +126,14 @@ export const useCategoriesPage = () => {
     }
     
     try {
-      await createCategoryGroup(newGroupName);
+      await createCategoryGroup({ 
+        name: newGroupName,
+        budgetId: activeBudgetId
+      });
       setNewGroupName('');
-      fetchCategoryGroups();
+      if (activeBudgetId) {
+        fetchCategoryGroups(activeBudgetId);
+      }
       toast.success('Category group created successfully');
     } catch (error) {
       toast.error('Failed to create category group');
@@ -135,9 +155,15 @@ export const useCategoriesPage = () => {
     }
     
     try {
-      await updateCategoryGroup(groupId, editingGroupName);
+      const group = categoryGroups.find(g => g.id === groupId);
+      await updateCategoryGroup(groupId, {
+        name: editingGroupName,
+        budgetId: group?.budgetId || activeBudgetId
+      });
       setEditingGroupId(null);
-      fetchCategoryGroups();
+      if (activeBudgetId) {
+        fetchCategoryGroups(activeBudgetId);
+      }
       toast.success('Category group updated successfully');
     } catch (error) {
       toast.error('Failed to update category group');
@@ -154,7 +180,9 @@ export const useCategoriesPage = () => {
   const handleDeleteGroup = async (groupId: number) => {
     try {
       await deleteCategoryGroup(groupId);
-      fetchCategoryGroups();
+      if (activeBudgetId) {
+        fetchCategoryGroups(activeBudgetId);
+      }
       setIsDeleteDialogOpen(null);
       toast.success('Category group deleted successfully');
     } catch (error) {
@@ -168,8 +196,9 @@ export const useCategoriesPage = () => {
     setIsAddingCategory(groupId === 0 ? null : groupId);
     if (groupId !== 0) {
       setNewCategoryName('');
+      setNewCategoryIcon('');
       setNewCategoryIsDefault(false);
-      setSelectedBudgetId('');
+      setSelectedBudgetId(activeBudgetId);
     }
   };
 
@@ -184,9 +213,10 @@ export const useCategoriesPage = () => {
       // Log request payload
       const requestData = {
         name: newCategoryName,
+        icon: newCategoryIcon || undefined,
         categoryGroupId: groupId,
-        budgetId: selectedBudgetId === 'none' ? undefined : selectedBudgetId || undefined,
-        isDefault: newCategoryIsDefault,
+        budgetId: selectedBudgetId || activeBudgetId,
+        defaultCat: newCategoryIsDefault,
       };
       
       console.log('Creating category with payload:', requestData);
@@ -223,18 +253,22 @@ export const useCategoriesPage = () => {
       // Create update payload based on what the API expects
       const updateData: {
         name: string;
+        icon?: string;
         categoryGroupId: number;
-        budgetId: string | undefined;
-        isDefault?: boolean;
+        budgetId?: number;
+        defaultCat?: boolean;
       } = {
         name: editingCategory.name,
         categoryGroupId: editingCategory.categoryGroupId,
-        budgetId: editingCategory.budgetId === 'none' ? undefined : editingCategory.budgetId
+        budgetId: editingCategory.budgetId
       };
 
-      // Only include isDefault if it's true (avoid sending undefined)
-      if (editingCategory.isDefault === true) {
-        updateData['isDefault'] = true;
+      if (editingCategory.icon) {
+        updateData.icon = editingCategory.icon;
+      }
+
+      if (editingCategory.defaultCat === true) {
+        updateData.defaultCat = true;
       }
 
       console.log('Updating category with payload:', updateData);
@@ -256,20 +290,20 @@ export const useCategoriesPage = () => {
     try {
       const updatedCategory = {
         ...category,
-        isDefault: !category.isDefault,
+        defaultCat: !category.defaultCat,
       };
       
       // Create update payload based on what the API expects
       const updateData = {
         name: category.name,
-        categoryGroupId: category.categoryGroupId,
-        budgetId: category.budgetId === 'none' ? undefined : category.budgetId,
-        isDefault: !category.isDefault
+        icon: category.icon,
+        budgetId: category.budgetId,
+        defaultCat: !category.defaultCat
       };
       
       console.log('Toggling default status with payload:', updateData);
       
-      await updateCategory(category.id, updateData);
+      await updateCategory(category.id, { ...updateData, categoryGroupId: category.categoryGroupId });
       
       // Update the local state
       setGroupCategories(prev => ({
@@ -279,7 +313,7 @@ export const useCategoriesPage = () => {
         ),
       }));
       
-      toast.success(`Category ${updatedCategory.isDefault ? 'marked as default' : 'unmarked as default'}`);
+      toast.success(`Category ${updatedCategory.defaultCat ? 'marked as default' : 'unmarked as default'}`);
     } catch (error) {
       toast.error('Failed to update category');
       console.error('Error updating category:', error);
@@ -326,16 +360,25 @@ export const useCategoriesPage = () => {
     }
   };
 
-  const handleCategoryDefaultChange = (isDefault: boolean) => {
+  const handleCategoryIconChange = (icon: string) => {
     if (editingCategory) {
       setEditingCategory({
         ...editingCategory,
-        isDefault,
+        icon,
       });
     }
   };
 
-  const handleCategoryBudgetChange = (budgetId: string) => {
+  const handleCategoryDefaultChange = (defaultCat: boolean) => {
+    if (editingCategory) {
+      setEditingCategory({
+        ...editingCategory,
+        defaultCat,
+      });
+    }
+  };
+
+  const handleCategoryBudgetChange = (budgetId: number) => {
     if (editingCategory) {
       setEditingCategory({
         ...editingCategory,
@@ -354,8 +397,10 @@ export const useCategoriesPage = () => {
     editingGroupName,
     isAddingCategory,
     newCategoryName,
+    newCategoryIcon,
     newCategoryIsDefault,
     selectedBudgetId,
+    activeBudgetId,
     budgets,
     editingCategory,
     isDeleteDialogOpen,
@@ -364,8 +409,10 @@ export const useCategoriesPage = () => {
     setNewGroupName,
     setEditingGroupName,
     setNewCategoryName,
+    setNewCategoryIcon,
     setNewCategoryIsDefault,
     setSelectedBudgetId,
+    setActiveBudgetId,
     
     // Actions
     fetchCategoryGroups,
@@ -384,6 +431,7 @@ export const useCategoriesPage = () => {
     handleDeleteCategory,
     handleConfirmDelete,
     handleCategoryNameChange,
+    handleCategoryIconChange,
     handleCategoryDefaultChange,
     handleCategoryBudgetChange,
     setIsDeleteDialogOpen,

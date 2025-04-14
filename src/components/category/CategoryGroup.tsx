@@ -43,12 +43,12 @@ interface CategoryGroupProps {
   onCreateCategory: (groupId: number) => void;
   onNewCategoryNameChange: (name: string) => void;
   onNewCategoryDefaultChange: (isDefault: boolean) => void;
-  onBudgetIdChange: (budgetId: string) => void;
+  onBudgetIdChange: (budgetId: number) => void;
   onEditCategory: (category: CategoryResponse | null) => void;
   onSaveCategory: () => void;
   onEditCategoryNameChange: (name: string) => void;
   onEditCategoryDefaultChange: (isDefault: boolean) => void;
-  onEditCategoryBudgetChange: (budgetId: string) => void;
+  onEditCategoryBudgetChange: (budgetId: number) => void;
   onToggleCategoryDefault: (category: CategoryResponse) => void;
   onDeleteCategory: (categoryId: number) => void;
 }

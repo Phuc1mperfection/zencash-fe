@@ -1,18 +1,18 @@
 import api from "./api";
 
 // Category Group APIs
-export const getCategoryGroups = async () => {
-  const res = await api.get("/category-groups");
+export const getCategoryGroups = async (budgetId: number) => {
+  const res = await api.get(`/category-groups/budget/${budgetId}`);
   return res.data;
 };
 
-export const createCategoryGroup = async (name: string) => {
-  const res = await api.post("/category-groups", { name });
+export const createCategoryGroup = async (categoryGroup: { name: string, budgetId?: number }) => {
+  const res = await api.post("/category-groups", categoryGroup);
   return res.data;
 };
 
-export const updateCategoryGroup = async (id: number, name: string) => {
-  const res = await api.put(`/category-groups/${id}`, { name });
+export const updateCategoryGroup = async (id: number, categoryGroup: { name: string, budgetId?: number }) => {
+  const res = await api.put(`/category-groups/${id}`, categoryGroup);
   return res.data;
 };
 
@@ -29,9 +29,10 @@ export const getCategoriesByGroupId = async (groupId: number) => {
 
 export const createCategory = async (categoryData: {
   name: string;
+  icon?: string;
   categoryGroupId: number;
-  budgetId?: string;
-  isDefault: boolean;
+  budgetId?: number;
+  defaultCat: boolean;
 }) => {
   const res = await api.post("/categories", categoryData);
   return res.data;
@@ -41,8 +42,10 @@ export const updateCategory = async (
   categoryId: number,
   categoryData: {
     name?: string;
-    isDefault?: boolean;
-    budgetId?: string;
+    icon?: string;
+    categoryGroupId: number;
+    budgetId?: number;
+    defaultCat?: boolean;
   }
 ) => {
   const res = await api.put(`/categories/${categoryId}`, categoryData);

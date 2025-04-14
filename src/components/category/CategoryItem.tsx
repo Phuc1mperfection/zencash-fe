@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 
 import { CategoryResponse } from "@/types/CategoryResponse";
 import { BudgetData } from "@/types/BudgetData";
@@ -25,7 +25,7 @@ interface CategoryItemProps {
   onSaveEdit?: () => void;
   onEditNameChange?: (name: string) => void;
   onEditDefaultChange?: (isDefault: boolean) => void;
-  onEditBudgetChange?: (budgetId: string) => void;
+  onEditBudgetChange?: (budgetId: number) => void;
 }
 
 export const CategoryItem: React.FC<CategoryItemProps> = ({
@@ -39,7 +39,7 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
   onSaveEdit,
   onEditNameChange,
   onEditDefaultChange,
-  onEditBudgetChange,
+  // onEditBudgetChange,
 }) => {
   const isEditing = editingCategory?.id === category.id;
 
@@ -63,6 +63,14 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
     }
   };
 
+  // const handleBudgetChange = (value: number) => {
+  //   if (onEditBudgetChange) {
+  //     // Convert "none" to undefined or the value to a number
+  //     const budgetId = value === 0 ? undefined : Number(value);
+  //     onEditBudgetChange(budgetId as number);
+  //   }
+  // };
+
   return (
     <div className="flex items-center justify-between p-2 border rounded-md bg-card">
       {isEditing && editingCategory ? (
@@ -74,13 +82,14 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
             />
           </div>
           <div>
-            <Select
+            {/* <Select
               value={
                 editingCategory.budgetId
                   ? editingCategory.budgetId.toString()
                   : "none"
               }
-              onValueChange={(value) => onEditBudgetChange?.(value)}
+              onValueChange={handleBudgetChange}
+
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select budget">
@@ -101,13 +110,13 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
-              checked={editingCategory.isDefault}
+              checked={editingCategory.defaultCat}
               onCheckedChange={() =>
-                onEditDefaultChange?.(!editingCategory.isDefault)
+                onEditDefaultChange?.(!editingCategory.defaultCat)
               }
             />
             <span>Default</span>
@@ -125,7 +134,7 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
         <>
           <div className="flex items-center gap-2">
             <Checkbox
-              checked={category.isDefault}
+              checked={category.defaultCat}
               onCheckedChange={onToggleDefault}
             />
             <span>{category.name}</span>

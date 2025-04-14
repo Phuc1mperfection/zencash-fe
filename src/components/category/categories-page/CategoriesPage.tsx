@@ -1,7 +1,14 @@
-import {FC} from "react";
+import { FC } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { CategoryGroupContainer } from "./CategoryGroupContainer";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
@@ -18,8 +25,10 @@ export const CategoriesPage: FC = () => {
     editingGroupName,
     isAddingCategory,
     newCategoryName,
+    newCategoryIcon,
     newCategoryIsDefault,
     selectedBudgetId,
+    activeBudgetId,
     budgets,
     editingCategory,
     isDeleteDialogOpen,
@@ -28,8 +37,10 @@ export const CategoriesPage: FC = () => {
     setNewGroupName,
     setEditingGroupName,
     setNewCategoryName,
+    setNewCategoryIcon,
     setNewCategoryIsDefault,
     setSelectedBudgetId,
+    setActiveBudgetId,
 
     // Actions
     toggleGroupExpansion,
@@ -44,6 +55,7 @@ export const CategoriesPage: FC = () => {
     handleToggleCategoryDefault,
     handleConfirmDelete,
     handleCategoryNameChange,
+    handleCategoryIconChange,
     handleCategoryDefaultChange,
     handleCategoryBudgetChange,
     setIsDeleteDialogOpen,
@@ -52,7 +64,26 @@ export const CategoriesPage: FC = () => {
   return (
     <div className="container p-4 sm:p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
+
+          {/* Budget Selector */}
+          <Select
+            value={activeBudgetId?.toString()}
+            onValueChange={(value) => setActiveBudgetId(Number(value))}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Budget" />
+            </SelectTrigger>
+            <SelectContent>
+              {budgets.map((budget) => (
+                <SelectItem key={budget.id} value={budget.id.toString()}>
+                  {budget.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         <div className="flex items-center gap-2">
           <Input
@@ -77,6 +108,7 @@ export const CategoriesPage: FC = () => {
         editingGroupName={editingGroupName}
         isAddingCategory={isAddingCategory}
         newCategoryName={newCategoryName}
+        newCategoryIcon={newCategoryIcon}
         newCategoryIsDefault={newCategoryIsDefault}
         selectedBudgetId={selectedBudgetId}
         budgets={budgets}
@@ -90,11 +122,13 @@ export const CategoriesPage: FC = () => {
         onCancelEdit={handleCancelGroupEdit}
         onCreateCategory={handleCreateCategory}
         onNewCategoryNameChange={setNewCategoryName}
+        onNewCategoryIconChange={setNewCategoryIcon}
         onNewCategoryDefaultChange={setNewCategoryIsDefault}
         onBudgetIdChange={setSelectedBudgetId}
         onEditCategory={handleEditCategory}
         onSaveCategory={handleSaveCategory}
         onEditCategoryNameChange={handleCategoryNameChange}
+        onEditCategoryIconChange={handleCategoryIconChange}
         onEditCategoryDefaultChange={handleCategoryDefaultChange}
         onEditCategoryBudgetChange={handleCategoryBudgetChange}
         onToggleCategoryDefault={handleToggleCategoryDefault}

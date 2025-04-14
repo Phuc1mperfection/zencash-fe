@@ -3,13 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// 
 
 import { BudgetData } from "@/types/BudgetData";
 
@@ -20,7 +14,7 @@ interface CategoryFormProps {
   budgets: BudgetData[];
   onNameChange: (name: string) => void;
   onDefaultChange: (isDefault: boolean) => void;
-  onBudgetChange: (budgetId: string) => void;
+  onBudgetChange: (budgetId: number) => void;
   onCancel: () => void;
   onSubmit: () => void;
   submitLabel: string;
@@ -29,11 +23,11 @@ interface CategoryFormProps {
 export const CategoryForm: React.FC<CategoryFormProps> = ({
   categoryName,
   isDefault,
-  selectedBudgetId,
-  budgets,
+  // selectedBudgetId,
+  // budgets,
   onNameChange,
   onDefaultChange,
-  onBudgetChange,
+  // onBudgetChange,
   onCancel,
   onSubmit,
   submitLabel,
@@ -50,7 +44,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
               onChange={(e) => onNameChange(e.target.value)}
             />
           </div>
-          <div>
+          {/* <div>
             <p className="mb-2 text-sm font-medium">Budget</p>
             <Select value={selectedBudgetId} onValueChange={onBudgetChange}>
               <SelectTrigger>
@@ -65,7 +59,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
         <div className="flex items-center space-x-2">
           <Checkbox
