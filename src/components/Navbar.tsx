@@ -81,9 +81,10 @@ const Navbar = () => {
               className={`ml-2 text-xl font-bold transition-colors duration-300 ${
               isScrolled
                 ? isAuthenticated
-                ? "text-black"
-                : "text-[#001e2b]"
-                : "text-primary"
+                ? "text-black uppercase"
+                : "text-[#001e2b] "
+                : "text-white uppercase "
+                
               }`}
             >
               Zen Cash
