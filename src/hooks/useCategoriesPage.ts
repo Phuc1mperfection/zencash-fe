@@ -40,23 +40,30 @@ export const useCategoriesPage = () => {
   const [newCategoryIcon, setNewCategoryIcon] = useState<string>('');
   const [newCategoryIsDefault, setNewCategoryIsDefault] = useState(false);
   const [selectedBudgetId, setSelectedBudgetId] = useState<number | undefined>(undefined);
-  const [activeBudgetId, setActiveBudgetId] = useState<number>(1); // Default to first budget initially
+  const [activeBudgetId, setActiveBudgetId] = useState<number | undefined>(undefined); // Changed from 1 to undefined
   const [budgets, setBudgets] = useState<BudgetData[]>([]);
   const [editingCategory, setEditingCategory] = useState<CategoryResponse | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<DeleteDialogState | null>(null);
-  const fetchBudgets = async () => {
+  
+  const fetchBudgets = useCallback(async () => {
     try {
       const budgetData = await getBudgets();
       setBudgets(budgetData);
       
       // Set the active budget to the first one if available
-      if (budgetData.length > 0 && !activeBudgetId) {
+      if (budgetData.length > 0) {
         setActiveBudgetId(budgetData[0].id);
+      } else {
+        // No budgets available for this user
+        setActiveBudgetId(undefined);
+        
       }
     } catch (error) {
       console.error('Error fetching budgets:', error);
+      
     }
-  };
+  }, []);
+
   // Load category groups on component mount
   useEffect(() => {
     fetchBudgets();
@@ -66,14 +73,19 @@ export const useCategoriesPage = () => {
   useEffect(() => {
     if (activeBudgetId) {
       fetchCategoryGroups(activeBudgetId);
+    } else {
+      // Clear category groups if no active budget
+      setCategoryGroups([]);
     }
   }, [activeBudgetId]);
 
-  // Fetch budgets for dropdown
-
-
   // Fetch all category groups for a specific budget
   const fetchCategoryGroups = useCallback(async (budgetId: number) => {
+    if (!budgetId) {
+      console.error('No budget ID provided to fetchCategoryGroups');
+      return;
+    }
+
     try {
       const groups = await getCategoryGroups(budgetId);
       setCategoryGroups(groups);
@@ -85,13 +97,13 @@ export const useCategoriesPage = () => {
       });
       setExpandedGroups(expanded);
     } catch (error) {
-      toast.error('Failed to load category groups');
+      // Don't show toast because this might be expected for new users
       console.error('Error fetching category groups:', error);
     }
   }, [expandedGroups]);
 
   // Fetch categories for a specific group
-  const fetchCategories = async (groupId: number) => {
+  const fetchCategories = useCallback(async (groupId: number) => {
     try {
       const categories = await getCategoriesByGroupId(groupId);
       setGroupCategories(prev => ({
@@ -102,10 +114,10 @@ export const useCategoriesPage = () => {
       toast.error(`Failed to load categories for group ${groupId}`);
       console.error(`Error fetching categories for group ${groupId}:`, error);
     }
-  };
+  }, []);
   
   // Toggle group expansion
-  const toggleGroupExpansion = (groupId: number) => {
+  const toggleGroupExpansion = useCallback((groupId: number) => {
     const newState = !expandedGroups[groupId];
     setExpandedGroups({
       ...expandedGroups,
@@ -116,10 +128,10 @@ export const useCategoriesPage = () => {
     if (newState && !groupCategories[groupId]) {
       fetchCategories(groupId);
     }
-  };
+  }, [expandedGroups, groupCategories, fetchCategories]);
 
   // Create a new category group
-  const handleCreateGroup = async () => {
+  const handleCreateGroup = useCallback(async () => {
     if (!newGroupName.trim()) {
       toast.error('Group name cannot be empty');
       return;
@@ -139,16 +151,16 @@ export const useCategoriesPage = () => {
       toast.error('Failed to create category group');
       console.error('Error creating category group:', error);
     }
-  };
+  }, [newGroupName, activeBudgetId, fetchCategoryGroups]);
 
   // Start editing a category group
-  const handleEditGroupClick = (group: CategoryGroupType) => {
+  const handleEditGroupClick = useCallback((group: CategoryGroupType) => {
     setEditingGroupId(group.id);
     setEditingGroupName(group.name);
-  };
+  }, []);
 
   // Save edited category group
-  const handleSaveGroupEdit = async (groupId: number) => {
+  const handleSaveGroupEdit = useCallback(async (groupId: number) => {
     if (!editingGroupName.trim()) {
       toast.error('Group name cannot be empty');
       return;
@@ -169,15 +181,15 @@ export const useCategoriesPage = () => {
       toast.error('Failed to update category group');
       console.error('Error updating category group:', error);
     }
-  };
+  }, [editingGroupName, categoryGroups, activeBudgetId, fetchCategoryGroups]);
 
   // Cancel editing a category group
-  const handleCancelGroupEdit = () => {
+  const handleCancelGroupEdit = useCallback(() => {
     setEditingGroupId(null);
-  };
+  }, []);
 
   // Delete a category group
-  const handleDeleteGroup = async (groupId: number) => {
+  const handleDeleteGroup = useCallback(async (groupId: number) => {
     try {
       await deleteCategoryGroup(groupId);
       if (activeBudgetId) {
@@ -189,10 +201,10 @@ export const useCategoriesPage = () => {
       toast.error('Failed to delete category group');
       console.error('Error deleting category group:', error);
     }
-  };
+  }, [activeBudgetId, fetchCategoryGroups]);
 
   // Start adding a new category to a group
-  const handleAddCategoryClick = (groupId: number) => {
+  const handleAddCategoryClick = useCallback((groupId: number) => {
     setIsAddingCategory(groupId === 0 ? null : groupId);
     if (groupId !== 0) {
       setNewCategoryName('');
@@ -200,10 +212,10 @@ export const useCategoriesPage = () => {
       setNewCategoryIsDefault(false);
       setSelectedBudgetId(activeBudgetId);
     }
-  };
+  }, [activeBudgetId]);
 
   // Create a new category
-  const handleCreateCategory = async (groupId: number) => {
+  const handleCreateCategory = useCallback(async (groupId: number) => {
     if (!newCategoryName.trim()) {
       toast.error('Category name cannot be empty');
       return;
@@ -238,17 +250,17 @@ export const useCategoriesPage = () => {
       console.error('Error creating category:', error);
       toast.error('Failed to create category');
     }
-  };
+  }, [newCategoryName, newCategoryIcon, selectedBudgetId, activeBudgetId, newCategoryIsDefault, fetchCategories]);
 
   // Start editing a category
-  const handleEditCategory = (category: CategoryResponse | null) => {
+  const handleEditCategory = useCallback((category: CategoryResponse | null) => {
     // Always set the editingCategory to whatever was passed in
     // This allows null to be passed to cancel editing
     setEditingCategory(category);
-  };
+  }, []);
 
   // Save edited category
-  const handleSaveCategory = async () => {
+  const handleSaveCategory = useCallback(async () => {
     if (!editingCategory) return;
     
     if (!editingCategory.name.trim()) {
@@ -297,10 +309,10 @@ export const useCategoriesPage = () => {
       toast.error('Failed to update category');
       console.error('Error updating category:', error);
     }
-  };
+  }, [editingCategory, fetchCategories]);
 
   // Toggle category default status
-  const handleToggleCategoryDefault = async (category: CategoryResponse) => {
+  const handleToggleCategoryDefault = useCallback(async (category: CategoryResponse) => {
     try {
       const updatedCategory = {
         ...category,
@@ -332,10 +344,10 @@ export const useCategoriesPage = () => {
       toast.error('Failed to update category');
       console.error('Error updating category:', error);
     }
-  };
+  }, []);
 
   // Delete a category
-  const handleDeleteCategory = async (categoryId: number, groupId: number) => {
+  const handleDeleteCategory = useCallback(async (categoryId: number, groupId: number) => {
     try {
       await deleteCategory(categoryId);
       fetchCategories(groupId);
@@ -345,10 +357,10 @@ export const useCategoriesPage = () => {
       toast.error('Failed to delete category');
       console.error('Error deleting category:', error);
     }
-  };
+  }, [fetchCategories]);
 
   // Handle deletion confirmation
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = useCallback(() => {
     if (!isDeleteDialogOpen) return;
     
     if (isDeleteDialogOpen.type === 'group') {
@@ -362,44 +374,44 @@ export const useCategoriesPage = () => {
         handleDeleteCategory(isDeleteDialogOpen.id, Number(groupId));
       }
     }
-  };
+  }, [isDeleteDialogOpen, handleDeleteGroup, groupCategories, handleDeleteCategory]);
 
   // Handle category editing
-  const handleCategoryNameChange = (name: string) => {
+  const handleCategoryNameChange = useCallback((name: string) => {
     if (editingCategory) {
       setEditingCategory({
         ...editingCategory,
         name,
       });
     }
-  };
+  }, [editingCategory]);
 
-  const handleCategoryIconChange = (icon: string) => {
+  const handleCategoryIconChange = useCallback((icon: string) => {
     if (editingCategory) {
       setEditingCategory({
         ...editingCategory,
         icon,
       });
     }
-  };
+  }, [editingCategory]);
 
-  const handleCategoryDefaultChange = (defaultCat: boolean) => {
+  const handleCategoryDefaultChange = useCallback((defaultCat: boolean) => {
     if (editingCategory) {
       setEditingCategory({
         ...editingCategory,
         defaultCat,
       });
     }
-  };
+  }, [editingCategory]);
 
-  const handleCategoryBudgetChange = (budgetId: number) => {
+  const handleCategoryBudgetChange = useCallback((budgetId: number) => {
     if (editingCategory) {
       setEditingCategory({
         ...editingCategory,
         budgetId,
       });
     }
-  };
+  }, [editingCategory]);
 
   return {
     // State

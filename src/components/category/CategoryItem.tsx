@@ -192,8 +192,7 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
             <span>{category.name}</span>
             {category.budgetId && (
               <Badge
-                variant="secondary"
-                className="text-xs bg-primary/20 text-primary-foreground py-1 px-2 rounded-full"
+                variant="default"
               >
                 {matchedBudget
                   ? matchedBudget.name
