@@ -100,9 +100,13 @@ export function EditBudgetForm({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Budget Name</FormLabel>
+                  <FormLabel htmlFor="edit-budget-name">Budget Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Monthly Groceries" {...field} />
+                    <Input
+                      id="edit-budget-name"
+                      placeholder="e.g., Monthly Groceries"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Enter a descriptive name for your budget.
@@ -123,13 +127,16 @@ export function EditBudgetForm({
 
                 return (
                   <FormItem>
-                    <FormLabel>Budget Amount</FormLabel>
+                    <FormLabel htmlFor="edit-budget-amount">
+                      Budget Amount
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2">
                           {currencySymbol}
                         </div>
                         <Input
+                          id="edit-budget-amount"
                           placeholder={currency === "VND" ? "0" : "0.00"}
                           type="number"
                           step={stepValue}

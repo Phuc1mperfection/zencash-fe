@@ -87,9 +87,13 @@ export function BudgetForm({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Budget Name</FormLabel>
+                  <FormLabel htmlFor="budget-name">Budget Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Monthly Groceries" {...field} />
+                    <Input
+                      id="budget-name"
+                      placeholder="e.g., Monthly Groceries"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Enter a descriptive name for your budget.
@@ -110,13 +114,16 @@ export function BudgetForm({
 
                 return (
                   <FormItem>
-                    <FormLabel>Monthly Budget Amount</FormLabel>
+                    <FormLabel htmlFor="budget-amount">
+                      Monthly Budget Amount
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2">
                           {currencySymbol}
                         </div>
                         <Input
+                          id="budget-amount"
                           placeholder={currency === "VND" ? "0" : "0.00"}
                           type="number"
                           step={stepValue}
