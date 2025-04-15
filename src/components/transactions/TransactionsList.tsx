@@ -153,16 +153,7 @@ setTimeout(() => {
   };
 
   // Display loading or empty state
-  // if (loading) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center py-8">
-  //       <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-zen-green"></div>
-  //       <p className="mt-2 text-sm text-muted-foreground">
-  //         Loading transactions...
-  //       </p>
-  //     </div>
-  //   );
-  // }
+
 
   if (!loading && displayedTransactions.length === 0) {
     return (

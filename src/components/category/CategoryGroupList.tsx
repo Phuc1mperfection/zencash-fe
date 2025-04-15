@@ -5,11 +5,14 @@ import { CategoryList } from "@/components/category/CategoryList";
 
 const CategoryGroupList = () => {
   const [categoryGroups, setCategoryGroups] = useState<{ id: number; name: string }[]>([]);
+  // Default budgetId - you might want to get this from a context or props
+  const defaultBudgetId = 1; 
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const data = await getCategoryGroups();
+        // Pass the required budgetId parameter
+        const data = await getCategoryGroups(defaultBudgetId);
         setCategoryGroups(data);
       } catch (err) {
         console.error("Failed to fetch category groups", err);

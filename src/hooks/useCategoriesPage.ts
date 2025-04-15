@@ -210,10 +210,17 @@ export const useCategoriesPage = () => {
     }
     
     try {
+      // Extract just the filename from the icon path if it exists
+      let iconName;
+      if (newCategoryIcon) {
+        // Get only the filename from the path (e.g., "neko.jpg" from "/image/icon/neko.jpg")
+        iconName = newCategoryIcon.split('/').pop();
+      }
+      
       // Log request payload
       const requestData = {
         name: newCategoryName,
-        icon: newCategoryIcon || undefined,
+        icon: iconName || undefined,
         categoryGroupId: groupId,
         budgetId: selectedBudgetId || activeBudgetId,
         defaultCat: newCategoryIsDefault,
@@ -250,6 +257,13 @@ export const useCategoriesPage = () => {
     }
     
     try {
+      // Extract just the filename from the icon path if it exists
+      let iconName;
+      if (editingCategory.icon) {
+        // Get only the filename from the path (e.g., "neko.jpg" from "/image/icon/neko.jpg")
+        iconName = editingCategory.icon.split('/').pop();
+      }
+      
       // Create update payload based on what the API expects
       const updateData: {
         name: string;
@@ -263,8 +277,8 @@ export const useCategoriesPage = () => {
         budgetId: editingCategory.budgetId
       };
 
-      if (editingCategory.icon) {
-        updateData.icon = editingCategory.icon;
+      if (iconName) {
+        updateData.icon = iconName;
       }
 
       if (editingCategory.defaultCat === true) {

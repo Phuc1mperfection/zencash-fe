@@ -70,6 +70,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
   editingGroupName,
   isAddingCategory,
   newCategoryName,
+  newCategoryIcon,
   newCategoryIsDefault,
   selectedBudgetId,
   onGroupNameChange,
@@ -77,11 +78,13 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
   onCancelEdit,
   onCreateCategory,
   onNewCategoryNameChange,
+  onNewCategoryIconChange,
   onNewCategoryDefaultChange,
   onBudgetIdChange,
   onEditCategory,
   onSaveCategory,
   onEditCategoryNameChange,
+  onEditCategoryIconChange,
   onEditCategoryDefaultChange,
   onEditCategoryBudgetChange,
   onToggleCategoryDefault,
@@ -163,10 +166,12 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
             {isAddingCategory === group.id && (
               <CategoryForm
                 categoryName={newCategoryName}
+                categoryIcon={newCategoryIcon}
                 isDefault={newCategoryIsDefault}
                 selectedBudgetId={selectedBudgetId}
                 budgets={budgets}
                 onNameChange={onNewCategoryNameChange}
+                onIconChange={onNewCategoryIconChange}
                 onDefaultChange={onNewCategoryDefaultChange}
                 onBudgetChange={onBudgetIdChange}
                 onCancel={() => onAddCategory(0)} // Pass 0 to cancel
@@ -199,6 +204,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
                       onCancelEdit={() => onEditCategory(null)}
                       onSaveEdit={onSaveCategory}
                       onEditNameChange={onEditCategoryNameChange}
+                      onEditIconChange={onEditCategoryIconChange}
                       onEditDefaultChange={onEditCategoryDefaultChange}
                       onEditBudgetChange={onEditCategoryBudgetChange}
                     />
