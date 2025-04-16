@@ -53,9 +53,10 @@ const Budget = () => {
 
   // Handle delete budget click
   const handleDeleteClick = useCallback((budget: BudgetData) => {
+   
     setTimeout(() => {
       setSelectedBudget(budget);
-      setIsEditBudgetOpen(true);
+      setIsDeleteDialogOpen(true);
     }, 0);
   }, []);
 
