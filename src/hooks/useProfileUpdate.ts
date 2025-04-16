@@ -26,7 +26,8 @@ export function useProfileUpdate() {
       const updatedUser = await authService.updateProfile({
         username: data.username,
         email: data.email,
-        fullname: data.fullname
+        fullname: data.fullname,
+        avatar: data.avatar
       });
 
       console.log("Profile updated successfully:", updatedUser);
@@ -47,6 +48,7 @@ export function useProfileUpdate() {
           username: updatedUser.username || user?.username || "",
           email: updatedUser.email || user?.email || "",
           fullname: updatedUser.fullname || user?.fullname || "",
+          avatar: updatedUser.avatar || user?.avatar || "",
         });
 
         // Also update localStorage
@@ -56,6 +58,7 @@ export function useProfileUpdate() {
           username: updatedUser.username || currentUser.username || "",
           email: updatedUser.email || currentUser.email || "",
           fullname: updatedUser.fullname || currentUser.fullname || "",
+          avatar: updatedUser.avatar || currentUser.avatar || "",
         };
         localStorage.setItem("user", JSON.stringify(updatedUserData));
       }

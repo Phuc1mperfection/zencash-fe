@@ -76,6 +76,7 @@ const authService = {
         refreshToken: localStorage.getItem("refreshToken") || "",
         fullname: user.fullname || "",
         currency: user.currency || "",
+        avatar: user.avatar || "",
       };
     }
     return null;
@@ -149,6 +150,7 @@ const authService = {
       email: data.email,
       fullname: data.fullname || "",
       currency: data.currency || "",
+      avatar: data.avatar || "",
     }));
   },
   
@@ -169,10 +171,17 @@ const authService = {
           refreshToken: localStorage.getItem("refreshToken") || "",
           fullname: response.data.fullname || localStorage.getItem("fullname") || "",
           currency: response.data.currency || localStorage.getItem("currency") || "",
+          avatar: response.data.avatar || userData.avatar || "",
         });
         
         // Show success toast at service level
         toast.success('Profile updated successfully');
+      }
+      
+      // Nếu backend trả về avatar mặc định nhưng chúng ta đang cố gắng cập nhật avatar mới,
+      // thì ưu tiên sử dụng avatar mới từ request
+      if (userData.avatar && (!response.data.avatar || response.data.avatar === "hinh-cute-meo.jpg")) {
+        response.data.avatar = userData.avatar;
       }
       
       return response.data;
@@ -227,4 +236,4 @@ const authService = {
 };
 
 
-export default authService; 
+export default authService;

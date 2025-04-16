@@ -1,10 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { UserProfileProps } from "./types";
+import avatarService from "@/services/avatarService";
 
 const UserProfile = memo(({ user, isOpen, onLogout }: UserProfileProps) => {
   const { t } = useTranslation();
@@ -14,12 +15,21 @@ const UserProfile = memo(({ user, isOpen, onLogout }: UserProfileProps) => {
     ? user.username.charAt(0).toUpperCase()
     : "?";
 
+  // Lấy URL avatar nếu có
+  const avatarUrl = user?.avatar
+    ? avatarService.getAvatarUrl(user.avatar)
+    : null;
+
   // Nếu sidebar đang mở rộng, hiển thị đầy đủ card
   if (isOpen) {
     return (
       <Card className="bg-card border-border shadow-sm">
         <CardContent className="p-4 flex flex-col items-center space-y-3">
           <Avatar className="w-16 h-16 border-2 border-primary/50">
+            <AvatarImage
+              src={avatarUrl || undefined}
+              alt={user?.username || "User"}
+            />
             <AvatarFallback className="bg-primary text-primary-foreground">
               {fallbackInitial}
             </AvatarFallback>

@@ -14,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 // Currency options
 
-
 export function ProfileForm() {
   const { user } = useAuth();
   const { updateProfile, isLoading } = useProfileUpdate();
@@ -25,6 +24,7 @@ export function ProfileForm() {
     username: user?.username || "",
     email: user?.email || "",
     fullname: user?.fullname || "",
+    avatar: user?.avatar || "hinh-cute-meo.jpg", // Default avatar
   };
 
   const form = useForm<ProfileFormValues>({
@@ -37,17 +37,30 @@ export function ProfileForm() {
     updateProfile(data);
   }
 
+  // Handle avatar change
+  const handleAvatarChange = (filename: string) => {
+    form.setValue("avatar", filename);
+    // Auto-submit the form when avatar changes
+    form.handleSubmit((data) => {
+      updateProfile(data);
+    })();
+  };
+
   return (
     <div className="space-y-6">
       <Card className="p-6">
         {/* Avatar Section */}
-        <AvatarSection username={user?.username} />
-
-       
+        <AvatarSection
+          username={user?.username}
+          onAvatarChange={handleAvatarChange}
+        />
 
         {/* Profile Form */}
-        <Form {...form} >
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 p-4"
+          >
             <div className="grid gap-4 md:grid-cols-2">
               {/* Username Field */}
               <FormFieldWrapper
@@ -73,7 +86,8 @@ export function ProfileForm() {
                 placeholder={t("common.fullname")}
               />
 
-       
+              {/* Hidden avatar field */}
+              <input type="hidden" {...form.register("avatar")} />
             </div>
 
             <div className="flex justify-end">

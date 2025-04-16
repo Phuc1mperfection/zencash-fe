@@ -32,11 +32,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           email: currentUser.email,
           fullname: currentUser.fullname || "",
           currency: currentUser.currency || "",
+          avatar: currentUser.avatar || "",
         });
         setIsAuthenticated(true);
 
         // Khởi tạo ngôn ngữ từ user
-       
       }
     };
 
@@ -50,11 +50,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       email: response.email,
       fullname: response.fullname || "",
       currency: response.currency || "",
+      avatar: response.avatar || "",
     });
     setIsAuthenticated(true);
 
     // Cập nhật ngôn ngữ sau khi đăng nhập
-
 
     return response;
   };
@@ -71,11 +71,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       email: loginResponse.email,
       fullname: loginResponse.fullname || "",
       currency: loginResponse.currency || "",
+      avatar: loginResponse.avatar || "",
     });
     setIsAuthenticated(true);
 
     // Cập nhật ngôn ngữ sau khi đăng ký
-
 
     return loginResponse;
   };

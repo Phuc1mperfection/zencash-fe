@@ -11,7 +11,7 @@ export interface SidebarContentProps {
   isOpen: boolean;
   handleLogout: () => void;
   handleItemClick: () => void;
-  user: { username?: string; email?: string } | null;
+  user: { username?: string; email?: string; avatar?: string } | null;
 }
 
 // Interface cho props của component SidebarItem
@@ -26,7 +26,7 @@ export interface SidebarItemProps {
 
 // Interface cho props của component UserProfile
 export interface UserProfileProps {
-  user: { username?: string; email?: string } | null;
+  user: { username?: string; email?: string; avatar?: string } | null;
   isOpen: boolean;
   onLogout: () => void;
 }

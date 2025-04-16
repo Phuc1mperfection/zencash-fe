@@ -11,6 +11,7 @@ export const profileFormSchema = z.object({
   fullname: z.string({
     required_error: "Please enter your full name.",
   }),
+  avatar: z.string().optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
