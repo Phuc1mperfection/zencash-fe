@@ -42,7 +42,9 @@
     "language": "Ngôn ngữ",
     "selectCurrency": "Chọn tiền tệ",
     "selectLanguage": "Chọn ngôn ngữ",
-    "avatarSection.title": "Ảnh đại diện"
+    "avatarSection.title": "Ảnh đại diện",
+    "avatarSection.upload": "Tải lên ảnh đại diện",
+    "avatarSection.remove": "Xóa ảnh đại diện"
 
   },
   "settings": {

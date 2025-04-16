@@ -52,6 +52,8 @@
     "language": "Language",
     "currency": "Currency",
     "avatarSection.title": "Avatar",
+    "avatarSection.upload": "Upload",
+    "avatarSection.remove": "Remove",
     "selectLanguage": "Select Language",
     "currencyChangeSuccess":" Currency changed successfully"
   },
