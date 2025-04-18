@@ -27,6 +27,7 @@ const authService = {
           refreshToken: response.data.refreshToken,
           fullname: response.data.fullname,
           currency: response.data.currency,
+          avatar: response.data.avatar,
         });
       }
       return response.data;
