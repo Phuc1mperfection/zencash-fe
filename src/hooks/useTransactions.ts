@@ -4,9 +4,9 @@ import transactionService, {
   TransactionResponse as Transaction, 
   CategoryGroupStatistics
 } from '@/services/transactionService';
-import { toast } from '@/hooks/use-toast';
-
-
+import { toast } from 'react-hot-toast';
+import invoiceService from '@/services/invoiceService';
+import { InvoiceData } from '@/types/InvoiceData';
 
 export const useTransactions = (initialBudgetId?: number) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -20,25 +20,44 @@ export const useTransactions = (initialBudgetId?: number) => {
   const [selectedBudgetId, setSelectedBudgetId] = useState<number | undefined>(initialBudgetId);
 
   const fetchTransactions = useCallback(async (budgetId?: number) => {
-    if (!budgetId && !selectedBudgetId) return;
+    console.log("fetchTransactions called with budgetId:", budgetId);
+    console.log("selectedBudgetId in hook:", selectedBudgetId);
+    
+    if (!budgetId && !selectedBudgetId) {
+      console.log("No budgetId available, trying to get from local storage");
+      // Try to get from local storage as fallback
+      const storedBudget = localStorage.getItem('selectedBudget');
+      const fallbackBudgetId = storedBudget ? JSON.parse(storedBudget)?.id : null;
+      
+      if (!fallbackBudgetId) {
+        console.log("No fallback budgetId found, returning early");
+        return;
+      }
+      
+      budgetId = fallbackBudgetId;
+      console.log("Using fallback budgetId from localStorage:", fallbackBudgetId);
+    }
     
     const targetBudgetId = budgetId || selectedBudgetId;
-    if (!targetBudgetId) return;
+    console.log("Final targetBudgetId:", targetBudgetId);
+    
+    if (!targetBudgetId) {
+      console.log("No targetBudgetId after fallback, returning early");
+      return;
+    }
     
     setLoading(true);
     setError(null);
     
     try {
+      console.log("Fetching transactions for budgetId:", targetBudgetId);
       const data = await transactionService.getTransactionsByBudget(targetBudgetId);
+      console.log("Fetched transactions:", data.length);
       setTransactions(data);
     } catch (err) {
       console.error('Error fetching transactions:', err);
       setError('Failed to load transactions. Please try again later.');
-      toast({
-        title: 'Error',
-        description: 'Failed to load transactions.',
-        variant: 'destructive'
-      });
+      toast.error('Failed to load transactions. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -51,11 +70,7 @@ export const useTransactions = (initialBudgetId?: number) => {
       setIncomeExpense(data);
     } catch (err) {
       console.error('Error fetching income/expense summary:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to load income/expense summary.',
-        variant: 'destructive'
-      });
+      toast.error('Failed to load income/expense summary. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -74,11 +89,7 @@ export const useTransactions = (initialBudgetId?: number) => {
       setCategoryStatistics(data);
     } catch (err) {
       console.error('Error fetching category statistics:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to load category statistics.',
-        variant: 'destructive'
-      });
+      toast.error('Failed to load category statistics. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -89,18 +100,11 @@ export const useTransactions = (initialBudgetId?: number) => {
     try {
       const newTransaction = await transactionService.createTransaction(transaction);
       await fetchTransactions(selectedBudgetId); // Refresh transactions list
-      toast({
-        title: 'Success',
-        description: 'Transaction added successfully.',
-      });
+      toast.success('Transaction added successfully!');
       return newTransaction;
     } catch (err) {
       console.error('Error adding transaction:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to add transaction.',
-        variant: 'destructive'
-      });
+      toast.error('Failed to add transaction. Please try again later.');
       throw err;
     } finally {
       setLoading(false);
@@ -112,18 +116,11 @@ export const useTransactions = (initialBudgetId?: number) => {
     try {
       const updatedTransaction = await transactionService.updateTransaction(id, transaction);
       await fetchTransactions(selectedBudgetId); // Refresh transactions list
-      toast({
-        title: 'Success',
-        description: 'Transaction updated successfully.',
-      });
+      toast.success('Transaction updated successfully!');
       return updatedTransaction;
     } catch (err) {
       console.error('Error updating transaction:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to update transaction.',
-        variant: 'destructive'
-      });
+      toast.error('Failed to update transaction. Please try again later.');
       throw err;
     } finally {
       setLoading(false);
@@ -136,19 +133,39 @@ export const useTransactions = (initialBudgetId?: number) => {
       const success = await transactionService.deleteTransaction(id);
       if (success) {
         await fetchTransactions(selectedBudgetId); // Refresh transactions list
-        toast({
-          title: 'Success',
-          description: 'Transaction deleted successfully.',
-        });
+        toast.success('Transaction deleted successfully!');
       }
       return success;
     } catch (err) {
       console.error('Error deleting transaction:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete transaction.',
-        variant: 'destructive'
-      });
+      toast.error('Failed to delete transaction. Please try again later.'); 
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmInvoiceTransaction = async (invoiceData: Omit<InvoiceData, 'id'>) => {
+    setLoading(true);
+    try {
+
+      // Call the invoice service to confirm and create a transaction
+      const newTransaction = await invoiceService.confirmInvoice(invoiceData);
+      
+      // Set the budget ID if it's from the transaction
+      if (newTransaction.budgetId && !selectedBudgetId) {
+        setSelectedBudgetId(newTransaction.budgetId);
+      }
+      await fetchTransactions(newTransaction.budgetId);
+      await fetchCategoryStatistics(newTransaction.budgetId);
+      await fetchIncomeExpenseSummary();
+      
+      toast.success('Invoice processed successfully!');
+      
+      return newTransaction;
+    } catch (err) {
+      console.error('Error confirming invoice transaction:', err);
+      toast.error('Failed to create transaction from invoice. Please try again later.');
       throw err;
     } finally {
       setLoading(false);
@@ -204,6 +221,7 @@ export const useTransactions = (initialBudgetId?: number) => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    confirmInvoiceTransaction,
     changeBudget
   };
 };

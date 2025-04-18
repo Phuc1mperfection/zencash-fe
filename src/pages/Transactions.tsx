@@ -208,7 +208,16 @@ export const Transactions = () => {
         </TabsContent>
 
         <TabsContent value="scan">
-          <InvoiceRecognition />
+          <InvoiceRecognition
+            onTransactionConfirmed={() => {
+              console.log(
+                "Transaction confirmed from invoice, refreshing list..."
+              );
+              if (filters.budgetId) {
+                fetchTransactions(filters.budgetId);
+              }
+            }}
+          />
         </TabsContent>
       </Tabs>
 

@@ -2,101 +2,157 @@ import { useState } from "react";
 import { Upload, FileText, AlertCircle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { toast } from "@/hooks/use-toast";
+import { useTransactions } from "@/hooks/useTransactions";
+import * as invoiceService from "@/services/invoiceService";
+import { Spinner } from "@/components/ui/spinner";
+import { getCurrencySymbol } from "@/utils/currencyFormatter";
+import { InvoiceData } from "@/types/InvoiceData";
 
-interface ExtractedData {
-  description?: string;
-  amount?: number;
-  date?: Date;
-  category?: string;
+interface InvoiceRecognitionProps {
+  onTransactionConfirmed?: () => void;
 }
 
-export function InvoiceRecognition() {
+export function InvoiceRecognition({
+  onTransactionConfirmed,
+}: InvoiceRecognitionProps) {
+  const { confirmInvoiceTransaction, selectedBudgetId } = useTransactions();
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [extractedData, setExtractedData] = useState<ExtractedData | null>(null);
+  const [extractedData, setExtractedData] = useState<InvoiceData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isTransactionFormOpen, setIsTransactionFormOpen] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     const file = event.target.files?.[0];
-    
+
     if (!file) return;
-    
+
     // Check if the file is an image
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       setError("Please upload an image file (JPEG, PNG)");
       return;
     }
-    
+
     setIsUploading(true);
-    
-    // Read the file and convert it to base64
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadedImage(e.target?.result as string);
-      setIsUploading(false);
-      processImage(e.target?.result as string);
-    };
-    
-    reader.onerror = () => {
-      setIsUploading(false);
-      setError("Error reading the file. Please try again.");
-    };
-    
-    reader.readAsDataURL(file);
+    uploadInvoiceImage(file);
   };
-  
-  const processImage = async (imageData: string) => {
-    setIsProcessing(true);
-    setError(null);
-    
+
+  const uploadInvoiceImage = async (file: File) => {
     try {
-      // Simulate AI processing with a timeout
-      setTimeout(() => {
-        // This is a simulation of AI extracting data
-        // In a real implementation, you would call an AI service API here
-        
-        // Mock extracted data (random values for demo)
-        const mockData: ExtractedData = {
-          description: "Office Supplies",
-          amount: Math.floor(Math.random() * 100) + 10,
-          date: new Date(),
-          category: "shopping"
-        };
-        
-        setExtractedData(mockData);
-        setIsProcessing(false);
-        
-        toast({
-          title: "Receipt processed successfully",
-          description: "We've extracted the information from your receipt."
-        });
-        
-      }, 2000); // 2 second delay to simulate processing
-      
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setIsProcessing(true);
+
+      // Upload the invoice image to the API
+      const data = await invoiceService.uploadInvoice(file);
+
+      // Read the file for preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedImage(e.target?.result as string);
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
+
+      // Set the extracted data
+      setExtractedData(data);
+      setIsProcessing(false);
+
+      toast({
+        title: "Receipt processed successfully",
+        description: "We've extracted the information from your receipt.",
+      });
     } catch (err) {
       setIsProcessing(false);
+      setIsUploading(false);
+      console.error("Error processing invoice:", err);
       setError("Failed to process the image. Please try again.");
+      toast({
+        title: "Processing Error",
+        description: "Could not extract data from the receipt.",
+        variant: "destructive",
+      });
     }
   };
-  
-  const handleCreateTransaction = () => {
-    if (extractedData) {
-      setIsTransactionFormOpen(true);
+
+  const handleCreateTransaction = async () => {
+    if (!extractedData) return;
+
+    setIsConfirming(true);
+
+    try {
+      console.log("Starting invoice confirmation process");
+
+      // Make sure we have a budget ID - either from extractedData or from the hook
+      const { ...dataToConfirm } = extractedData;
+
+      // If extractedData doesn't have a valid budgetId, use the one from the hook
+      if (!dataToConfirm.budgetId && selectedBudgetId) {
+        console.log("Using selectedBudgetId from hook:", selectedBudgetId);
+        dataToConfirm.budgetId = selectedBudgetId;
+      }
+
+      console.log("Confirming invoice with data:", dataToConfirm);
+      await confirmInvoiceTransaction(dataToConfirm);
+
+      // Notify parent component that a transaction was confirmed
+      if (onTransactionConfirmed) {
+        console.log("Calling onTransactionConfirmed callback");
+        onTransactionConfirmed();
+      }
+
+      // Close the invoice recognition dialog
+      toast({
+        title: "Transaction created",
+        description: "Your transaction has been created successfully.",
+      });
+
+      // Reset the form
+      resetUpload();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create transaction. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error creating transaction:", error);
+    } finally {
+      setIsConfirming(false);
     }
   };
-  
+
   const resetUpload = () => {
     setUploadedImage(null);
     setExtractedData(null);
     setError(null);
+  };
+
+  // Format date from string to Date object for display
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch {
+      return "Invalid date";
+    }
+  };
+
+  // Open transaction form with prefilled data for editing
+  const handleEditTransaction = () => {
+    if (extractedData) {
+      setIsTransactionFormOpen(true);
+    }
   };
 
   return (
@@ -107,7 +163,8 @@ export function InvoiceRecognition() {
           Invoice Recognition
         </CardTitle>
         <CardDescription>
-          Upload a receipt or invoice image to automatically extract transaction details
+          Upload a receipt or invoice image to automatically extract transaction
+          details
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -118,7 +175,7 @@ export function InvoiceRecognition() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        
+
         {!uploadedImage ? (
           <div className="flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
             <Upload className="h-10 w-10 text-muted-foreground mb-4" />
@@ -143,15 +200,15 @@ export function InvoiceRecognition() {
         ) : (
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <img 
-                src={uploadedImage} 
-                alt="Uploaded Receipt" 
+              <img
+                src={uploadedImage}
+                alt="Uploaded Receipt"
                 className="w-full h-auto max-h-[300px] object-contain border rounded-md"
               />
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={resetUpload} 
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetUpload}
                 className="mt-2"
               >
                 Upload Different Image
@@ -171,7 +228,7 @@ export function InvoiceRecognition() {
                     <>Analyzing Receipt...</>
                   )}
                 </h3>
-                
+
                 {isProcessing ? (
                   <div className="animate-pulse space-y-2">
                     <div className="h-4 bg-muted rounded w-3/4"></div>
@@ -182,29 +239,48 @@ export function InvoiceRecognition() {
                 ) : extractedData ? (
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm text-muted-foreground">Description</p>
-                      <p className="font-medium">{extractedData.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Description
+                      </p>
+                      <p className="font-medium">{extractedData.note}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Amount</p>
-                      <p className="font-medium">${extractedData.amount?.toFixed(2)}</p>
+                      <p className="font-medium">
+                        {getCurrencySymbol()}
+                        {extractedData.amount.toFixed(2)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Date</p>
                       <p className="font-medium">
-                        {extractedData.date?.toLocaleDateString()}
+                        {formatDate(extractedData.date)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Category</p>
+                      <p className="text-sm text-muted-foreground">Type</p>
                       <p className="font-medium capitalize">
-                        {extractedData.category}
+                        {extractedData.type.toLowerCase()}
                       </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Budget & Category
+                      </p>
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-left font-medium text-primary"
+                        onClick={handleEditTransaction}
+                      >
+                        Edit budget and category
+                      </Button>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <p className="text-muted-foreground">Starting analysis...</p>
+                    <p className="text-muted-foreground">
+                      Starting analysis...
+                    </p>
                   </div>
                 )}
               </div>
@@ -212,28 +288,37 @@ export function InvoiceRecognition() {
           </div>
         )}
       </CardContent>
-      
+
       {extractedData && (
         <CardFooter>
-          <Button 
-            onClick={handleCreateTransaction} 
+          <Button
+            onClick={handleCreateTransaction}
             className="w-full"
+            disabled={isConfirming}
           >
-            Create Transaction
+            {isConfirming ? (
+              <>
+                <Spinner className="mr-2 h-4 w-4" />
+                Creating Transaction...
+              </>
+            ) : (
+              "Confirm and Create Transaction"
+            )}
           </Button>
         </CardFooter>
       )}
-      
+
       {extractedData && (
-        <TransactionForm 
-          open={isTransactionFormOpen} 
+        <TransactionForm
+          open={isTransactionFormOpen}
           onOpenChange={setIsTransactionFormOpen}
           prefillData={{
-            description: extractedData.description || "",
-            amount: extractedData.amount || 0,
-            date: extractedData.date || new Date(),
-            category: extractedData.category || "other",
-            isIncome: false
+            description: extractedData.note,
+            amount: extractedData.amount,
+            date: new Date(extractedData.date),
+            budgetId: extractedData.budgetId,
+            categoryId: extractedData.categoryId,
+            isIncome: extractedData.type === "INCOME",
           }}
         />
       )}
