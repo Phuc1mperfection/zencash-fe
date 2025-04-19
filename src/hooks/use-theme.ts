@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState, useCallback } from 'react';
 
 type Theme = 'dark' | 'light';
 
 // Helper function to log theme-related events with timestamps
 const debug = (message: string, data?: unknown) => {
-  console.log(`[Theme Debug ${new Date().toISOString()}]`, message, data || '');
 };
 
 // Tối ưu theme hook để tránh re-render không cần thiết
