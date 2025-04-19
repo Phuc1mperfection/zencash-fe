@@ -97,6 +97,15 @@ export const getCategoryGroupStatistics = async (budgetId: number): Promise<Cate
   return response.data;
 };
 
+// Get top expenses for the current user
+export const getTopExpenses = async (limit = 10): Promise<TransactionResponse[]> => {
+  const response = await axios.get(
+    `${API_URL}/transactions/top-expenses?limit=${limit}`, 
+    getAuthHeader()
+  );
+  return response.data;
+};
+
 export default {
   createTransaction,
   updateTransaction,
@@ -104,4 +113,5 @@ export default {
   getTransactionsByBudget,
   getUserIncomeExpense,
   getCategoryGroupStatistics,
+  getTopExpenses,
 };

@@ -150,12 +150,6 @@ export const useTransactionForm = ({
         onClose();
       }
 
-      // Show success message
-      toast.success(
-        editMode
-          ? "Transaction updated successfully!"
-          : "Transaction added successfully!"
-      );
     } catch (error) {
       console.error("Transaction submission error:", error);
       toast.error(

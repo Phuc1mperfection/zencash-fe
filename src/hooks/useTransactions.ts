@@ -20,29 +20,22 @@ export const useTransactions = (initialBudgetId?: number) => {
   const [selectedBudgetId, setSelectedBudgetId] = useState<number | undefined>(initialBudgetId);
 
   const fetchTransactions = useCallback(async (budgetId?: number) => {
-    console.log("fetchTransactions called with budgetId:", budgetId);
-    console.log("selectedBudgetId in hook:", selectedBudgetId);
     
     if (!budgetId && !selectedBudgetId) {
-      console.log("No budgetId available, trying to get from local storage");
       // Try to get from local storage as fallback
       const storedBudget = localStorage.getItem('selectedBudget');
       const fallbackBudgetId = storedBudget ? JSON.parse(storedBudget)?.id : null;
       
       if (!fallbackBudgetId) {
-        console.log("No fallback budgetId found, returning early");
         return;
       }
       
       budgetId = fallbackBudgetId;
-      console.log("Using fallback budgetId from localStorage:", fallbackBudgetId);
     }
     
     const targetBudgetId = budgetId || selectedBudgetId;
-    console.log("Final targetBudgetId:", targetBudgetId);
     
     if (!targetBudgetId) {
-      console.log("No targetBudgetId after fallback, returning early");
       return;
     }
     
@@ -50,9 +43,7 @@ export const useTransactions = (initialBudgetId?: number) => {
     setError(null);
     
     try {
-      console.log("Fetching transactions for budgetId:", targetBudgetId);
       const data = await transactionService.getTransactionsByBudget(targetBudgetId);
-      console.log("Fetched transactions:", data.length);
       setTransactions(data);
     } catch (err) {
       console.error('Error fetching transactions:', err);
@@ -114,10 +105,12 @@ export const useTransactions = (initialBudgetId?: number) => {
   const updateTransaction = async (id: number, transaction: TransactionRequest) => {
     setLoading(true);
     try {
-      const updatedTransaction = await transactionService.updateTransaction(id, transaction);
-      await fetchTransactions(selectedBudgetId); // Refresh transactions list
-      toast.success('Transaction updated successfully!');
-      return updatedTransaction;
+      const success = await transactionService.updateTransaction(id, transaction);
+      if (success) {
+        await fetchTransactions(selectedBudgetId); // Refresh transactions list
+        toast.success('Transaction updated successfully!');
+      }
+      return success;
     } catch (err) {
       console.error('Error updating transaction:', err);
       toast.error('Failed to update transaction. Please try again later.');
