@@ -60,28 +60,23 @@ export const getTotalRemaining = async () => {
 // Get totals for budget overview (total budget, spent, remaining)
 export const getBudgetOverview = async () => {
   try {
-    // Use the existing endpoints to calculate the overview
-    const budgets = await getBudgets();
-    
-    // Calculate totals
-    const totalBudget = budgets.reduce((sum: number, budget: BudgetData & { totalAmount: number }) => sum + budget.totalAmount, 0);
-    const totalRemaining = budgets.reduce((sum: number, budget: BudgetData & { remainingAmount: number }) => sum + budget.remainingAmount, 0);
-    const totalSpent = totalBudget - totalRemaining;
-    const spentPercentage = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
-    if (isNaN(spentPercentage)) {
-      throw new Error("Spent percentage calculation resulted in NaN");
-    }
-    // if (totalRemaining < 0) {
-    //   totalRemaining = 0; // Ensure remaining budget is not negative  
-    // }
-    return {
-      totalBudget,
-      totalSpent,
-      totalRemaining,
-      spentPercentage
-    };
+    // Call the budget overview endpoint
+    const response = await api.get("/budgets/overview");
+    return response.data;
   } catch (error) {
-    console.error("Error calculating budget overview:", error);
+    console.error("Error fetching budget overview:", error);
+    throw error;
+  }
+};
+
+// Get overview for a specific budget
+export const getSingleBudgetOverview = async (budgetId: number) => {
+  try {
+    // Call the specific budget overview endpoint
+    const response = await api.get(`/budgets/${budgetId}/overview`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching overview for budget ID ${budgetId}:`, error);
     throw error;
   }
 };

@@ -6,7 +6,8 @@ import {
   updateBudget, 
   deleteBudget,
   getTotalRemaining,
-  getBudgetOverview
+  getBudgetOverview,
+  getSingleBudgetOverview
 } from "@/services/budgetService";
 import { getCategoriesByBudget } from "@/services/categoryService";
 import { BudgetData } from "@/types/BudgetData";
@@ -17,17 +18,13 @@ export interface BudgetFormData {
   amount: number;
 }
 
-export interface BudgetStats {
-  spent: number;
-  left: number;
-  percentage: number;
-}
-
+// Không cần tính toán budget stats nữa vì dùng dữ liệu từ API
 export interface BudgetOverview {
   totalBudget: number;
   totalSpent: number;
   totalRemaining: number;
   spentPercentage: number;
+  budgetId?: number; // Optional ID for single budget overview
 }
 
 export const useBudget = () => {
@@ -50,7 +47,6 @@ export const useBudget = () => {
       return budgetData;
     } catch (error) {
       console.error("Failed to fetch budgets:", error);
-  
       return [];
     } finally {
       setIsLoading(false);
@@ -79,7 +75,6 @@ export const useBudget = () => {
       return budgetsWithCats;
     } catch (error) {
       console.error("Failed to fetch budgets with categories", error);
-      // toast.error("Failed to fetch budgets with categories. Please try again.");
       return [];
     } finally {
       setIsLoading(false);
@@ -101,33 +96,33 @@ export const useBudget = () => {
   const fetchBudgetOverview = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log("Fetching budget overview data...");
       const overview = await getBudgetOverview();
-      console.log("Budget overview data received:", overview);
+      
       setBudgetOverview(overview);
       return overview;
     } catch (error) {
       console.error("Failed to fetch budget overview:", error);
-    
       return null;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Calculate percentage and spent amount for a budget
-  const calculateBudgetStats = (budget: BudgetData): BudgetStats => {
-    const spent = budget.totalAmount - budget.remainingAmount;
-    const percentage = budget.totalAmount > 0 
-      ? Math.round((spent / budget.totalAmount) * 100)
-      : 0;
-    
-    return {
-      spent,
-      left: budget.remainingAmount,
-      percentage
-    };
-  };
+  // Get overview for a single budget
+  const fetchSingleBudgetOverview = useCallback(async (budgetId: number) => {
+    try {
+      console.log(`Fetching overview for budget ID ${budgetId}...`);
+      const overview = await getSingleBudgetOverview(budgetId);
+      console.log(`Overview for budget ID ${budgetId} received:`, overview);
+      return {
+        ...overview,
+        budgetId // Add the budgetId to the response
+      };
+    } catch (error) {
+      console.error(`Failed to fetch overview for budget ID ${budgetId}:`, error);
+      return null;
+    }
+  }, []);
 
   // Get appropriate color class for progress bar based on percentage
   const getProgressClass = (percentage: number): string => {
@@ -175,10 +170,27 @@ export const useBudget = () => {
       console.log("Updating budget with ID", id, "with data:", budgetData);
       const updatedBudget = await updateBudget(id, budgetData);
       
-      // Refresh all budget data after update
-      await fetchBudgetOverview(); 
-      await fetchBudgets();
-      await loadBudgetsWithCategories();
+      // Thêm một khoảng thời gian ngắn để đảm bảo backend đã xử lý hoàn tất
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Refresh theo thứ tự và đảm bảo mỗi bước hoàn tất trước khi đến bước tiếp theo
+      console.log("Refreshing data after budget update...");
+      
+      try {
+        // Dùng Promise.all để đồng thời gửi các request nhưng đợi tất cả hoàn thành
+        await Promise.all([
+          fetchBudgetOverview().then(result => {
+            console.log("Budget overview refreshed:", result);
+            return result;
+          }),
+          fetchBudgets(),
+          loadBudgetsWithCategories()
+        ]);
+        
+        console.log("All data refreshed successfully");
+      } catch (refreshError) {
+        console.error("Error refreshing data after budget update:", refreshError);
+      }
       
       // Show success message
       toast.success("Budget updated successfully!");
@@ -220,10 +232,10 @@ export const useBudget = () => {
     loadBudgetsWithCategories,
     fetchTotalRemaining,
     fetchBudgetOverview,
+    fetchSingleBudgetOverview,
     handleCreateBudget,
     handleUpdateBudget,
     handleDeleteBudget,
-    calculateBudgetStats,
     getProgressClass
   };
 };
