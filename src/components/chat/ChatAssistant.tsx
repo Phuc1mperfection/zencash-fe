@@ -131,7 +131,7 @@ export function ChatAssistant() {
     })}
   </div>
 
-  {messages.length === 1 && (
+  {messages.length === 0 && (
     <div className="p-4 border-t">
       <h4 className="text-sm font-medium mb-2">Suggested questions:</h4>
       <div className="flex flex-wrap gap-2">
