@@ -14,6 +14,8 @@ import {
   Cell,
 } from "recharts";
 import { memo } from "react";
+import { BudgetOverview } from "@/components/budget/BudgetOverview";
+
 // Sample data for charts
 const monthlyData = [
   { name: "Jan", value: 4000 },
@@ -42,10 +44,12 @@ const COLORS = ["#00ed64", "#00b8d4", "#ff6b6b"];
 
 const Overview = () => {
   return (
-    
+       
     <div className="space-y-8 dark:text-white light:text-black ">
       <h1 className="text-2xl font-bold ">Overview</h1>
       {/* Stats Cards */}
+       {/* Budget Overview Component */}
+       <BudgetOverview />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
           <h3 className="text-gray-400 text-sm">Total Balance</h3>
