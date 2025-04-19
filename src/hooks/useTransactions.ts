@@ -70,7 +70,7 @@ export const useTransactions = (initialBudgetId?: number) => {
       setIncomeExpense(data);
     } catch (err) {
       console.error('Error fetching income/expense summary:', err);
-      toast.error('Failed to load income/expense summary. Please try again later.');
+      // toast.error('Failed to load income/expense summary. Please try again later.');
     } finally {
       setLoading(false);
     }

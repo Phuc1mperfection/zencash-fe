@@ -109,7 +109,10 @@ export function AppearanceSettings() {
         </div>
         <div>
           <h2 className=" font-semibold mt-4">{t("settings.currency")}</h2>
-          <Select value={selectedCurrency} onValueChange={handleCurrencyChange}>
+          <Select
+            value={selectedCurrency}
+            onValueChange={(value) => handleCurrencyChange(String(value))}
+          >
             <SelectTrigger className="w-[240px]">
               <SelectValue placeholder="Select currency" />
             </SelectTrigger>

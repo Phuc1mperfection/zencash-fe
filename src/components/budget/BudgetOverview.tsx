@@ -2,15 +2,37 @@ import { useEffect } from "react";
 import { formatCurrency } from "@/utils/currencyFormatter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBudget } from "@/hooks/useBudget";
+import { AlertCircle } from "lucide-react";
+import { BudgetOverviewSkeleton } from "./BudgetOverviewSkeleton";
 
 export function BudgetOverview() {
-  const { budgetOverview, fetchBudgetOverview, getProgressClass } = useBudget();
+  const { budgetOverview, fetchBudgetOverview, getProgressClass, isLoading } =
+    useBudget();
 
   useEffect(() => {
     fetchBudgetOverview();
   }, [fetchBudgetOverview]);
 
   const progressClass = getProgressClass(budgetOverview.spentPercentage);
+
+  if (isLoading) {
+    return <BudgetOverviewSkeleton />;
+  }
+  if (budgetOverview.totalBudget === 0) {
+    return (
+      <Card className="mb-6">
+        <div className="flex flex-col items-center justify-center py-8">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <AlertCircle className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <h3 className="mt-4 text-lg font-medium">No Budget found </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Please create a budget to start tracking your expenses.
+          </p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mb-6">

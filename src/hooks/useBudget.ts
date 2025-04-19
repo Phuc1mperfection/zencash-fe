@@ -79,7 +79,7 @@ export const useBudget = () => {
       return budgetsWithCats;
     } catch (error) {
       console.error("Failed to fetch budgets with categories", error);
-      toast.error("Failed to fetch budgets with categories. Please try again.");
+      // toast.error("Failed to fetch budgets with categories. Please try again.");
       return [];
     } finally {
       setIsLoading(false);
@@ -101,7 +101,9 @@ export const useBudget = () => {
   const fetchBudgetOverview = useCallback(async () => {
     setIsLoading(true);
     try {
+      console.log("Fetching budget overview data...");
       const overview = await getBudgetOverview();
+      console.log("Budget overview data received:", overview);
       setBudgetOverview(overview);
       return overview;
     } catch (error) {
@@ -173,6 +175,11 @@ export const useBudget = () => {
       console.log("Updating budget with ID", id, "with data:", budgetData);
       const updatedBudget = await updateBudget(id, budgetData);
       
+      // Refresh all budget data after update
+      await fetchBudgetOverview(); 
+      await fetchBudgets();
+      await loadBudgetsWithCategories();
+      
       // Show success message
       toast.success("Budget updated successfully!");
       return updatedBudget;
@@ -183,7 +190,7 @@ export const useBudget = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [fetchBudgetOverview, fetchBudgets, loadBudgetsWithCategories]);
 
   // Delete a budget
   const handleDeleteBudget = useCallback(async (id: number) => {
