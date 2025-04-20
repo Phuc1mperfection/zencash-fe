@@ -12,12 +12,7 @@ const API_URL = "http://localhost:8080/api";
 const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      console.log('Making login request to:', `${API_URL}/auth/login`);
-      console.log('Login request body:', JSON.stringify(credentials, null, 2));
-      
       const response = await api.post(`${API_URL}/auth/login`, credentials);
-      console.log('Login response data:', response.data);
-      
       if (response.data.accessToken) {
         // Lưu thông tin user từ response
         this.setUserInfo({
