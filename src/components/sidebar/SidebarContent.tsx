@@ -21,12 +21,7 @@ const menuItems = [
     to: "/dashboard",
     translationKey: "sidebar.overview",
   },
-  {
-    icon: ArrowLeftRight,
-    text: "Transactions",
-    to: "/dashboard/transactions",
-    translationKey: "sidebar.transactions",
-  },
+
   {
     icon: Wallet,
     text: "Budget",
@@ -38,6 +33,12 @@ const menuItems = [
     text: "Categories",
     to: "/dashboard/categories",
     translationKey: "sidebar.categories",
+  },
+  {
+    icon: ArrowLeftRight,
+    text: "Transactions",
+    to: "/dashboard/transactions",
+    translationKey: "sidebar.transactions",
   },
   {
     icon: BarChart,

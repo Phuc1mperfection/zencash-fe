@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/use-Auth";
 import { SidebarProps } from "./types";
 import { sidebarVariants, overlayVariants } from "./animations";
 import SidebarContent from "./SidebarContent";
-
 const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   const [isDesktopOpen, setIsDesktopOpen] = useState(false);
   const { user, logout } = useAuth();
