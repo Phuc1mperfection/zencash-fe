@@ -51,6 +51,7 @@ export function TransactionFormMain({
     onSubmit,
     handleBudgetChange,
     handleCategoryChange,
+    handleDateChange,
     toggleTransactionType,
     reset,
   } = useTransactionForm({
@@ -140,7 +141,10 @@ export function TransactionFormMain({
             />
 
             {/* Date Field */}
-            <TransactionDateSelector form={form} />
+            <TransactionDateSelector
+              form={form}
+              handleDateChange={handleDateChange}
+            />
 
             <DialogFooter>
               <Button type="submit" disabled={isSubmitting} className="w-full">

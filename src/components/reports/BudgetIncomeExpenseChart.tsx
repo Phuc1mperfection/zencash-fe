@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
   BarChart,
@@ -63,7 +64,7 @@ export const BudgetIncomeExpenseChart = () => {
         }
 
         // Chuyển đổi dữ liệu để hiển thị
-        const formattedData = budgets.map((budget: { id: number; name: string }, index: number) => {
+        const formattedData = budgets.map((budget: any, index: number) => {
           // Phân phối tổng income và expense giữa các budgets (chỉ để demo)
           // Trong thực tế, bạn cần API trả về dữ liệu chính xác cho từng budget
           const income = index === 0 ? Number(transactionData.totalIncome) : 0;
@@ -157,28 +158,53 @@ export const BudgetIncomeExpenseChart = () => {
                 width={120}
                 tick={(props) => {
                   const { x, y, payload } = props;
-                  const text = payload.value;
-                  const maxWidth = 100;
-                  const truncatedText =
-                    text.length > maxWidth / 10
-                      ? text.substring(0, maxWidth / 10) + "..."
-                      : text;
-
                   return (
-                    <text x={x} y={y} fontSize={12} width={maxWidth} fill="#666">
-                      {truncatedText}
+                    <text
+                      x={x}
+                      y={y}
+                      dy={3}
+                      fontSize={12}
+                      width={100}
+                      textAnchor="end"
+                      style={{
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {payload.value}
                     </text>
                   );
                 }}
               />
               <Tooltip
-                formatter={(value) => [formatCurrency(Number(value)), ""]}
+                cursor={{ fill: "transparent" }}
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-md border bg-background px-3 py-2 shadow-sm">
+                        <p className="font-medium text-sm mb-1">{label}</p>
+                        {payload.map((entry: any, index: number) => (
+                          <p
+                            key={`item-${index}`}
+                            className="text-sm"
+                            style={{ color: entry.color }}
+                          >
+                            {entry.name}: {formatCurrency(entry.value)}
+                          </p>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
               />
+
               <Legend />
               <Bar
                 dataKey="income"
                 name="Income"
-                fill="#125526"
+                fill="#4ade80"
                 radius={[0, 4, 4, 0]}
               >
                 <LabelList
@@ -192,13 +218,13 @@ export const BudgetIncomeExpenseChart = () => {
               <Bar
                 dataKey="expense"
                 name="Expense"
-                fill="#1CC354"
+                fill="#E21D48"
                 radius={[0, 4, 4, 0]}
               >
                 <LabelList
                   dataKey="expense"
                   position="right"
-                  formatter={(value:number) =>
+                  formatter={(value: number) =>
                     value > 0 ? formatCurrency(value, false) : ""
                   }
                 />

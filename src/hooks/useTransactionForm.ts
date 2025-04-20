@@ -176,6 +176,32 @@ export const useTransactionForm = ({
     form.trigger("categoryId"); // Validate the field
   };
 
+  // Handle date change
+  const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      console.log("[useTransactionForm] Handling date change:", date);
+      
+      // Cập nhật giá trị với các flag để đảm bảo form được cập nhật đúng cách
+      form.setValue("date", date, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true
+      });
+      
+      // Kích hoạt validation
+      form.trigger("date");
+      
+      // Hack: Force revalidate form sau một khoảng thời gian
+      setTimeout(() => {
+        // Tạo một đối tượng Date mới để đảm bảo tham chiếu thay đổi
+        const newDate = new Date(date.getTime());
+        form.setValue("date", newDate, {
+          shouldValidate: true
+        });
+      }, 50);
+    }
+  };
+
   // Handle toggle between income/expense
   const toggleTransactionType = () => {
     const currentValue = form.getValues().isIncome;
@@ -207,6 +233,7 @@ export const useTransactionForm = ({
     onSubmit: form.handleSubmit(onSubmit),
     handleBudgetChange,
     handleCategoryChange,
+    handleDateChange,
     toggleTransactionType,
     reset: () => form.reset(defaultTransactionValues),
   };
