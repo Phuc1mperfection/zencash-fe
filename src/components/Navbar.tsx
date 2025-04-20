@@ -70,7 +70,7 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed w-full transition-all duration-300 z-40  ${
-        isScrolled ? "bg-white/90 dark:bg-zinc-900/90" : "bg-transparent"
+        isScrolled ? "bg-white dark:bg-zinc-900" : "bg-transparent"
       } ${isAuthenticated ? "text-black dark:text-white" : ""}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,9 +86,9 @@ const Navbar = () => {
               className={`ml-2 text-xl font-bold transition-colors duration-300 ${
                 isScrolled
                   ? isAuthenticated
-                    ? "text-black dark:text-white uppercase"
+                    ? "text-black dark:text-white "
                     : "text-[#001e2b] dark:text-white"
-                  : "text-white uppercase "
+                  : "text-white  "
               }`}
             >
               Zen Cash
@@ -108,7 +108,7 @@ const Navbar = () => {
               {theme === "dark" ? (
                 <Sun className="h-5 w-5 text-yellow-400 hover:text-yellow-200 transition-colors" />
               ) : (
-                <Moon className="h-5 w-5 text-slate-700 hover:text-slate-900 transition-colors" />
+                <Moon className="h-5 w-5 text-cyan-500 hover:text-slate-900 transition-colors" />
               )}
             </Button>
 
