@@ -248,7 +248,7 @@ export const Landing = () => {
           <h2 className="text-4xl font-bold text-center text-black mb-16">
             What our users say
           </h2>
-          <div className="flex overflow-x-auto pb-8 -mx-4">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-8 pb-8">
             <TestimonialCard
               image="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
               name="Sarah Johnson"
