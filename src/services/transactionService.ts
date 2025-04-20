@@ -106,6 +106,28 @@ export const getTopExpenses = async (limit = 10): Promise<TransactionResponse[]>
   return response.data;
 };
 
+// Lấy dữ liệu thu nhập và chi tiêu theo từng tháng
+export const getMonthlyIncomeExpense = async (year = new Date().getFullYear()) => {
+  try {
+    const response = await axios.get(`${API_URL}/transactions/monthly?year=${year}`, getAuthHeader());
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching monthly income/expense data:", error);
+    throw error;
+  }
+};
+
+// Lấy dữ liệu thu nhập và chi tiêu cho tất cả các budget
+export const getAllBudgetIncomeExpense = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/budgets/transactions/summary`, getAuthHeader());
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all budget income/expense data:", error);
+    throw error;
+  }
+};
+
 export default {
   createTransaction,
   updateTransaction,
@@ -114,4 +136,6 @@ export default {
   getUserIncomeExpense,
   getCategoryGroupStatistics,
   getTopExpenses,
+  getMonthlyIncomeExpense,
+  getAllBudgetIncomeExpense,
 };

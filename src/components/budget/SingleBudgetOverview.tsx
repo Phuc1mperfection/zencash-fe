@@ -4,10 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBudget, BudgetOverview } from "@/hooks/useBudget";
 import { AlertCircle } from "lucide-react";
 import { BudgetOverviewSkeleton } from "./BudgetOverviewSkeleton";
+import { getBudgetTransactions } from "@/services/budgetService";
 
 interface SingleBudgetOverviewProps {
   budgetId: number;
   budgetName: string;
+}
+
+interface TransactionTotals {
+  income: number;
+  expense: number;
 }
 
 export function SingleBudgetOverview({
@@ -19,30 +25,45 @@ export function SingleBudgetOverview({
   const [budgetOverview, setBudgetOverview] = useState<BudgetOverview | null>(
     null
   );
+  const [transactionTotals, setTransactionTotals] =
+    useState<TransactionTotals | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadBudgetOverview = async () => {
+    const loadBudgetData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await fetchSingleBudgetOverview(budgetId);
-        if (data) {
-          console.log(`Loaded overview for budget ${budgetId}:`, data);
-          setBudgetOverview(data);
+        // Fetch both budget overview and transaction data in parallel
+        const [overviewData, transactionsData] = await Promise.all([
+          fetchSingleBudgetOverview(budgetId),
+          getBudgetTransactions(budgetId),
+        ]);
+
+        if (overviewData) {
+          console.log(`Loaded overview for budget ${budgetId}:`, overviewData);
+          setBudgetOverview(overviewData);
         } else {
           setError("Failed to load budget overview");
         }
+
+        if (transactionsData) {
+          console.log(
+            `Loaded transactions for budget ${budgetId}:`,
+            transactionsData
+          );
+          setTransactionTotals(transactionsData);
+        }
       } catch (err) {
-        console.error("Error loading budget overview:", err);
-        setError("Failed to load budget overview. Please try again.");
+        console.error("Error loading budget data:", err);
+        setError("Failed to load budget data. Please try again.");
       } finally {
         setIsLoading(false);
       }
     };
 
     if (budgetId) {
-      loadBudgetOverview();
+      loadBudgetData();
     }
   }, [budgetId, fetchSingleBudgetOverview]);
 
@@ -70,6 +91,11 @@ export function SingleBudgetOverview({
       </Card>
     );
   }
+
+  // Calculate actual balance from income and expense if available
+  const actualBalance = transactionTotals
+    ? Number(transactionTotals.income) - Number(transactionTotals.expense)
+    : budgetOverview.totalBudget - budgetOverview.totalSpent;
 
   // Thêm cảnh báo nếu tiêu quá nhiều - sử dụng dữ liệu chính xác từ API
   const isOverBudget = budgetOverview.totalRemaining < 0;
@@ -126,6 +152,23 @@ export function SingleBudgetOverview({
               {isOverBudget && <span className="text-xs ml-1">overspent</span>}
             </p>
           </div>
+
+          {/* Actual Balance */}
+          <div className="space-y-1 col-span-3">
+            <p className="text-sm font-medium text-muted-foreground">
+              Actual Balance (Income - Expense)
+            </p>
+            <p
+              className={`text-l font-bold ${
+                actualBalance < 0 ? "text-destructive" : "text-zen-green"
+              }`}
+            >
+              {formatCurrency(actualBalance)}
+              {actualBalance < 0 && (
+                <span className="text-xs ml-1">deficit</span>
+              )}
+            </p>
+          </div>
         </div>
 
         {/* Progress Bar */}
@@ -156,6 +199,28 @@ export function SingleBudgetOverview({
             />
           </div>
         </div>
+
+        {/* Income and Expense Details */}
+        {transactionTotals && (
+          <div className="mt-5 grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">
+                Total Income
+              </p>
+              <p className="text-l font-bold text-zen-green">
+                {formatCurrency(Number(transactionTotals.income))}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">
+                Total Expenses
+              </p>
+              <p className="text-l font-bold text-destructive">
+                {formatCurrency(Number(transactionTotals.expense))}
+              </p>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

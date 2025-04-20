@@ -80,3 +80,14 @@ export const getSingleBudgetOverview = async (budgetId: number) => {
     throw error;
   }
 };
+
+// Get income and expense transactions for a specific budget
+export const getBudgetTransactions = async (budgetId: number) => {
+  try {
+    const response = await api.get(`/budgets/${budgetId}/transactions`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching transactions for budget ID ${budgetId}:`, error);
+    throw error;
+  }
+};

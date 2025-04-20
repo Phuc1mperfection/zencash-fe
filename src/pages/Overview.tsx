@@ -99,10 +99,9 @@ const Overview = () => {
             </p>
           </CardContent>
         </Card>
-
-       
       </div>
-
+      {/* Income vs Expenses Chart */}
+      <IncomeExpenseChart />
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="stat-card">
@@ -111,7 +110,9 @@ const Overview = () => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="stat-value text-zen-blue">{formatCurrency(budgetOverview.totalBudget)}</div>
+            <div className="stat-value text-zen-blue">
+              {formatCurrency(budgetOverview.totalBudget)}
+            </div>
             <p className="text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 inline mr-1 text-zen-green" />
               +8.2% from last month
@@ -124,7 +125,9 @@ const Overview = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="stat-value text-zen-green">            {formatCurrency(totalIncome)}
+            <div className="stat-value text-zen-green">
+              {" "}
+              {formatCurrency(totalIncome)}
             </div>
             <p className="text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 inline mr-1 text-zen-green" />
@@ -139,8 +142,7 @@ const Overview = () => {
           </CardHeader>
           <CardContent>
             <div className="stat-value text-destructive">
-            {formatCurrency(totalExpense)}
-
+              {formatCurrency(totalExpense)}
             </div>
             <p className="text-xs text-muted-foreground">
               <TrendingDown className="h-3 w-3 inline mr-1 text-destructive" />
@@ -154,7 +156,9 @@ const Overview = () => {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="stat-value text-foreground">{budgetOverview.spentPercentage}%</div>
+            <div className="stat-value text-foreground">
+              {budgetOverview.spentPercentage}%
+            </div>
             <p className="text-xs text-muted-foreground">
               <Calendar className="h-3 w-3 inline mr-1" />
               This month's budget
@@ -163,8 +167,6 @@ const Overview = () => {
         </Card>
       </div>
 
-      {/* Income vs Expenses Chart */}
-      <IncomeExpenseChart />
       {/* Charts Section */}
       <Card className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Trend Chart */}

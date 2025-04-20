@@ -1,4 +1,4 @@
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number, p0?: boolean): string {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const currency = user.currency || "VND";
 
