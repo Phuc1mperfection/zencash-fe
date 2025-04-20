@@ -1,22 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatCurrency } from "@/utils/currencyFormatter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBudget } from "@/hooks/useBudget";
-import { BudgetOverviewSkeleton } from "./BudgetOverviewSkeleton";
-
 export function BudgetOverview() {
-  const { budgetOverview, fetchBudgetOverview, getProgressClass, isLoading } =
-    useBudget();
+  const { budgetOverview, fetchBudgetOverview, getProgressClass } = useBudget();
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
     fetchBudgetOverview();
   }, [fetchBudgetOverview]);
 
-  const progressClass = getProgressClass(budgetOverview.spentPercentage);
+  useEffect(() => {
+    if (budgetOverview?.totalRemaining < 0) {
+      // Trigger animation when overspent
+      setShouldAnimate(true);
+      const timer = setTimeout(() => setShouldAnimate(false), 2000); // only pulse for 2s
+      return () => clearTimeout(timer);
+    }
+  }, [budgetOverview?.totalRemaining]);
 
-  if (isLoading) {
-    return <BudgetOverviewSkeleton />;
-  }
+  const progressClass = getProgressClass(budgetOverview?.spentPercentage || 0);
+  const isOverBudget = (budgetOverview?.totalRemaining || 0) < 0;
+
 
 
   return (
@@ -31,31 +36,26 @@ export function BudgetOverview() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Total Budget */}
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">
-              Total Budget
-            </p>
-            <p className="text-3xl font-bold">
-              {formatCurrency(budgetOverview.totalBudget)}
-            </p>
+            <p className="text-sm font-medium text-muted-foreground">Total Budget</p>
+            <p className="text-3xl font-bold">{formatCurrency(budgetOverview.totalBudget)}</p>
           </div>
 
           {/* Spent So Far */}
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">
-              Spent So Far
-            </p>
-            <p className="text-3xl font-bold">
-              {formatCurrency(budgetOverview.totalSpent)}
-            </p>
+            <p className="text-sm font-medium text-muted-foreground">Spent So Far</p>
+            <p className="text-3xl font-bold">{formatCurrency(budgetOverview.totalSpent)}</p>
           </div>
 
           {/* Remaining */}
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">
-              Remaining
-            </p>
-            <p className="text-3xl font-bold text-zen-green">
-              {formatCurrency(budgetOverview.totalRemaining)}
+            <p className="text-sm font-medium text-muted-foreground">Remaining</p>
+            <p
+              className={`text-3xl font-bold ${
+                isOverBudget ? "text-destructive" : "text-zen-green"
+              }`}
+            >
+              {formatCurrency(Math.abs(budgetOverview.totalRemaining))}
+              {isOverBudget && <span className="text-xs ml-1">overspent</span>}
             </p>
           </div>
         </div>
@@ -75,8 +75,12 @@ export function BudgetOverview() {
 
           <div className="h-3 w-full bg-primary/20 rounded-full overflow-hidden">
             <div
-              className={`h-full ${progressClass} rounded-full transition-all`}
-              style={{ width: `${budgetOverview.spentPercentage}%` }}
+              className={`h-full ${progressClass} rounded-full transition-all duration-500 ${
+                shouldAnimate ? "animate-pulse" : ""
+              }`}
+              style={{
+                width: `${Math.min(100, budgetOverview.spentPercentage)}%`,
+              }}
             />
           </div>
         </div>

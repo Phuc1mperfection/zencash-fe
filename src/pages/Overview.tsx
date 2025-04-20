@@ -9,12 +9,23 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
-import { memo } from "react";
+import { BadgeAlert } from "lucide-react";
+import { useBudget } from "@/hooks/useBudget";
+
+import { memo, useState, useEffect } from "react";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
+import { getUserIncomeExpense } from "@/services/transactionService";
+import { formatCurrency } from "@/utils/currencyFormatter";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  CreditCard,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Calendar,
+} from "lucide-react";
+import IncomeExpenseChart from "@/components/overview/IncomeExpenseChart";
 
 // Sample data for charts
 const monthlyData = [
@@ -34,44 +45,131 @@ const categoryData = [
   { name: "Bills", value: 3500 },
 ];
 
-const pieData = [
-  { name: "Income", value: 8000 },
-  { name: "Expenses", value: 6000 },
-  { name: "Savings", value: 2000 },
-];
-
-const COLORS = ["#00ed64", "#00b8d4", "#ff6b6b"];
-
 const Overview = () => {
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const { budgetOverview, fetchBudgetOverview } = useBudget();
+
+  useEffect(() => {
+    fetchBudgetOverview();
+  }, [fetchBudgetOverview]);
+  useEffect(() => {
+    const fetchSummaryData = async () => {
+      try {
+        const { income, expense } = await getUserIncomeExpense();
+        setTotalIncome(income);
+        setTotalExpense(expense);
+      } catch (err) {
+        console.error("Error fetching summary data:", err);
+      }
+    };
+
+    fetchSummaryData();
+  }, []);
+
   return (
-       
-    <div className="space-y-8 dark:text-white light:text-black ">
+    <div className="space-y-8  ">
       <h1 className="text-2xl font-bold ">Overview</h1>
       {/* Stats Cards */}
-       {/* Budget Overview Component */}
-       <BudgetOverview />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-          <h3 className="text-gray-400 text-sm">Total Balance</h3>
-          <p className="text-2xl font-bold  mt-2">$12,345</p>
-        </div>
-        <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-          <h3 className="text-gray-400 text-sm">Monthly Income</h3>
-          <p className="text-2xl font-bold  mt-2">$8,000</p>
-        </div>
-        <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-          <h3 className="text-gray-400 text-sm">Monthly Expenses</h3>
-          <p className="text-2xl font-bold  mt-2">$6,000</p>
-        </div>
+      {/* Budget Overview Component */}
+      <BudgetOverview />
+      {/* Income and Expense Summary */}
+      <div className=" grid-cols-1 md:grid-cols-1 gap-6  mx-auto">
+        <Card className="stat-card items-center justify-center">
+          <CardHeader>
+            <CardTitle>Net Income</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Total income after deducting expenses.
+            </p>
+          </CardHeader>
+          <CardContent className="text-xl font-bold mt-2">
+            <p
+              className={`text-2xl font-bold ${
+                totalIncome - totalExpense < 0
+                  ? "text-destructive"
+                  : "text-zen-green"
+              }`}
+            >
+              {formatCurrency(Math.abs(totalIncome - totalExpense))}
+              {totalIncome - totalExpense < 0 && (
+                <span className="text-xs ml-2 text-muted-foreground font-normal inline-flex items-center gap-1">
+                  deficit <BadgeAlert className="w-4 h-4 text-red-700 " />
+                </span>
+              )}
+            </p>
+          </CardContent>
+        </Card>
+
+       
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="stat-card">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="stat-value text-zen-blue">{formatCurrency(budgetOverview.totalBudget)}</div>
+            <p className="text-xs text-muted-foreground">
+              <TrendingUp className="h-3 w-3 inline mr-1 text-zen-green" />
+              +8.2% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="stat-card">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Income</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="stat-value text-zen-green">            {formatCurrency(totalIncome)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <TrendingUp className="h-3 w-3 inline mr-1 text-zen-green" />
+              +5.4% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="stat-card">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Expenses</CardTitle>
+            <TrendingDown className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="stat-value text-destructive">
+            {formatCurrency(totalExpense)}
+
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <TrendingDown className="h-3 w-3 inline mr-1 text-destructive" />
+              -2.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="stat-card">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Budget Status</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="stat-value text-foreground">{budgetOverview.spentPercentage}%</div>
+            <p className="text-xs text-muted-foreground">
+              <Calendar className="h-3 w-3 inline mr-1" />
+              This month's budget
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Income vs Expenses Chart */}
+      <IncomeExpenseChart />
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Card className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Trend Chart */}
         <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-          <h3 className="text-xl font-semibold  mb-4">
-            Monthly Trend
-          </h3>
+          <h3 className="text-xl font-semibold  mb-4">Monthly Trend</h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyData}>
@@ -101,9 +199,7 @@ const Overview = () => {
 
         {/* Category Distribution Chart */}
         <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-          <h3 className="text-xl font-semibold  mb-4">
-            Category Distribution
-          </h3>
+          <h3 className="text-xl font-semibold  mb-4">Category Distribution</h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categoryData}>
@@ -124,51 +220,11 @@ const Overview = () => {
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
-
-      {/* Income vs Expenses Chart */}
-      <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-semibold  mb-4">
-          Income vs Expenses
-        </h3>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {pieData.map((_entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#001e2b",
-                  border: "1px solid #ffffff20",
-                  borderRadius: "8px",
-                }}
-                labelStyle={{ color: "#ffffff" }}
-              />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      </Card>
 
       {/* Recent Transactions */}
       <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-semibold  mb-4">
-          Recent Transactions
-        </h3>
+        <h3 className="text-xl font-semibold  mb-4">Recent Transactions</h3>
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
@@ -185,7 +241,7 @@ const Overview = () => {
                 </div>
               </div>
               <div className="text-right">
-                <p className="">${Math.random() * 1000}</p>
+                <p className="">{formatCurrency(Math.random() * 1000)}</p>
                 <p className="text-sm text-gray-400">2 hours ago</p>
               </div>
             </div>

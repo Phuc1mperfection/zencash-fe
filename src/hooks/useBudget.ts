@@ -112,9 +112,7 @@ export const useBudget = () => {
   // Get overview for a single budget
   const fetchSingleBudgetOverview = useCallback(async (budgetId: number) => {
     try {
-      console.log(`Fetching overview for budget ID ${budgetId}...`);
       const overview = await getSingleBudgetOverview(budgetId);
-      console.log(`Overview for budget ID ${budgetId} received:`, overview);
       return {
         ...overview,
         budgetId // Add the budgetId to the response
@@ -142,7 +140,6 @@ export const useBudget = () => {
         amount: data.amount,
       };
 
-      console.log("Creating budget with data:", budgetData);
       const createdBudget = await createBudget(budgetData);
       
       // Show success message
@@ -173,27 +170,23 @@ export const useBudget = () => {
         amount: data.amount,
       };
 
-      console.log("Updating budget with ID", id, "with data:", budgetData);
       const updatedBudget = await updateBudget(id, budgetData);
       
       // Thêm một khoảng thời gian ngắn để đảm bảo backend đã xử lý hoàn tất
       await new Promise(resolve => setTimeout(resolve, 300));
       
       // Refresh theo thứ tự và đảm bảo mỗi bước hoàn tất trước khi đến bước tiếp theo
-      console.log("Refreshing data after budget update...");
       
       try {
         // Dùng Promise.all để đồng thời gửi các request nhưng đợi tất cả hoàn thành
         await Promise.all([
           fetchBudgetOverview().then(result => {
-            console.log("Budget overview refreshed:", result);
             return result;
           }),
           fetchBudgets(),
           loadBudgetsWithCategories()
         ]);
         
-        console.log("All data refreshed successfully");
       } catch (refreshError) {
         console.error("Error refreshing data after budget update:", refreshError);
       }

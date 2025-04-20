@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, MoreVertical } from "lucide-react";
 import { formatCurrency } from "@/utils/currencyFormatter";
+import { renderIcon } from "@/utils/iconUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -157,7 +158,7 @@ export function BudgetList({
                   <div className="relative">
                     <div className="h-2 w-full bg-primary/20 rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${progressClass} rounded-full transition-all ${
+                        className={`h-full ${progressClass} rounded-full transition-all duration-500 ${
                           isOverBudget ? "animate-pulse" : ""
                         }`}
                         style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -191,7 +192,10 @@ export function BudgetList({
                     <div className="mt-4">
                       <div className="flex flex-wrap gap-2 break-all">
                         {budget.categories?.map((cat) => (
-                          <Badge key={cat.id} variant="secondary">
+                          <Badge key={cat.id} variant="default">
+                            <span className="mr-1">
+                              {cat.icon && renderIcon(cat.icon)}
+                            </span>
                             {cat.name}
                           </Badge>
                         ))}

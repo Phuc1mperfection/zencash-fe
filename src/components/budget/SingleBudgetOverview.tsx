@@ -97,7 +97,7 @@ export function SingleBudgetOverview({
             <p className="text-sm font-medium text-muted-foreground">
               Total Budget
             </p>
-            <p className="text-2xl font-bold">
+            <p className="text-l font-bold">
               {formatCurrency(budgetOverview.totalBudget)}
             </p>
           </div>
@@ -107,7 +107,7 @@ export function SingleBudgetOverview({
             <p className="text-sm font-medium text-muted-foreground">
               Spent So Far
             </p>
-            <p className="text-2xl font-bold">
+            <p className="text-l font-bold">
               {formatCurrency(budgetOverview.totalSpent)}
             </p>
           </div>
@@ -118,7 +118,7 @@ export function SingleBudgetOverview({
               Remaining
             </p>
             <p
-              className={`text-2xl font-bold ${
+              className={`text-l font-bold ${
                 isOverBudget ? "text-destructive" : "text-zen-green"
               }`}
             >
