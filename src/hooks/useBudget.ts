@@ -11,6 +11,7 @@ import {
 } from "@/services/budgetService";
 import { getCategoriesByBudget } from "@/services/categoryService";
 import { BudgetData } from "@/types/BudgetData";
+import axios from "axios";
 
 // Define the budget data interface
 export interface BudgetFormData {
@@ -149,8 +150,13 @@ export const useBudget = () => {
       
       return createdBudget;
     } catch (error) {
-      console.error("Failed to create budget:", error);
-      toast.error("Failed to create budget. Please try again.");
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to create budget');
+      } else {
+        console.error('Error creating category group:', error);
+        toast.error("Failed to create budget. Please try again.");
+      }
       return null;
     } finally {
       setIsLoading(false);

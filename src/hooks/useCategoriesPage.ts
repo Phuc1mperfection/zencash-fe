@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from "react-hot-toast";
+import axios from 'axios';
 import { CategoryResponse } from '@/types/CategoryResponse';
 import { BudgetData } from '@/types/BudgetData';
 
@@ -60,7 +61,12 @@ export const useCategoriesPage = () => {
       }
     } catch (error) {
       console.error('Error fetching budgets:', error);
-      
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to fetch budgets');
+      } else {
+        toast.error('Failed to fetch budgets');
+      }
     }
   }, []);
 
@@ -99,6 +105,9 @@ export const useCategoriesPage = () => {
     } catch (error) {
       // Don't show toast because this might be expected for new users
       console.error('Error fetching category groups:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+      }
     }
   }, [expandedGroups]);
 
@@ -111,7 +120,12 @@ export const useCategoriesPage = () => {
         [groupId]: categories,
       }));
     } catch (error) {
-      toast.error(`Failed to load categories for group ${groupId}`);
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || `Failed to load categories for group ${groupId}`);
+      } else {
+        toast.error(`Failed to load categories for group ${groupId}`);
+      }
       console.error(`Error fetching categories for group ${groupId}:`, error);
     }
   }, []);
@@ -148,6 +162,12 @@ export const useCategoriesPage = () => {
       }
       toast.success('Category group created successfully');
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message );
+      } else {
+        toast.error('Failed to create category group');
+      }
       console.error('Error creating category group:', error);
     }
   }, [newGroupName, activeBudgetId, fetchCategoryGroups]);
@@ -177,7 +197,12 @@ export const useCategoriesPage = () => {
       }
       toast.success('Category group updated successfully');
     } catch (error) {
-      toast.error('Failed to update category group');
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to update category group');
+      } else {
+        toast.error('Failed to update category group');
+      }
       console.error('Error updating category group:', error);
     }
   }, [editingGroupName, categoryGroups, activeBudgetId, fetchCategoryGroups]);
@@ -197,7 +222,12 @@ export const useCategoriesPage = () => {
       setIsDeleteDialogOpen(null);
       toast.success('Category group deleted successfully');
     } catch (error) {
-      toast.error('Failed to delete category group');
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to delete category group');
+      } else {
+        toast.error('Failed to delete category group');
+      }
       console.error('Error deleting category group:', error);
     }
   }, [activeBudgetId, fetchCategoryGroups]);
@@ -248,8 +278,13 @@ export const useCategoriesPage = () => {
       fetchCategories(groupId);
       toast.success('Category created successfully');
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to create category');
+      } else {
+        toast.error('Failed to create category');
+      }
       console.error('Error creating category:', error);
-      toast.error('Failed to create category');
     }
   }, [newCategoryName, newCategoryIcon, selectedBudgetId, activeBudgetId, newCategoryIsDefault, fetchCategories]);
 
@@ -306,7 +341,12 @@ export const useCategoriesPage = () => {
       setEditingCategory(null);
       toast.success('Category updated successfully');
     } catch (error) {
-      toast.error('Failed to update category');
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to update category');
+      } else {
+        toast.error('Failed to update category');
+      }
       console.error('Error updating category:', error);
     }
   }, [editingCategory, fetchCategories]);
@@ -341,7 +381,12 @@ export const useCategoriesPage = () => {
       
       toast.success(`Category ${updatedCategory.defaultCat ? 'marked as default' : 'unmarked as default'}`);
     } catch (error) {
-      toast.error('Failed to update category');
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to update category');
+      } else {
+        toast.error('Failed to update category');
+      }
       console.error('Error updating category:', error);
     }
   }, []);
@@ -354,7 +399,12 @@ export const useCategoriesPage = () => {
       setIsDeleteDialogOpen(null);
       toast.success('Category deleted successfully');
     } catch (error) {
-      toast.error('Failed to delete category');
+      if (axios.isAxiosError(error)) {
+        console.error('Error response data:', error.response?.data);
+        toast.error(error.response?.data?.message || 'Failed to delete category');
+      } else {
+        toast.error('Failed to delete category');
+      }
       console.error('Error deleting category:', error);
     }
   }, [fetchCategories]);
