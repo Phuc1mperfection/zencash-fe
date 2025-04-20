@@ -148,7 +148,6 @@ export const useCategoriesPage = () => {
       }
       toast.success('Category group created successfully');
     } catch (error) {
-      toast.error('Failed to create category group');
       console.error('Error creating category group:', error);
     }
   }, [newGroupName, activeBudgetId, fetchCategoryGroups]);
@@ -222,17 +221,19 @@ export const useCategoriesPage = () => {
     }
     
     try {
-      // Extract just the filename from the icon path if it exists
-      let iconName;
-      if (newCategoryIcon) {
+      // Handle icon based on its type
+      let iconValue = newCategoryIcon;
+      
+      // Only extract filename if it's a traditional file path and not a Font Awesome class
+      if (iconValue && !iconValue.startsWith("fa") && !iconValue.startsWith("http")) {
         // Get only the filename from the path (e.g., "neko.jpg" from "/image/icon/neko.jpg")
-        iconName = newCategoryIcon.split('/').pop();
+        iconValue = iconValue.split('/').pop() || iconValue;
       }
       
       // Log request payload
       const requestData = {
         name: newCategoryName,
-        icon: iconName || undefined,
+        icon: iconValue || undefined,
         categoryGroupId: groupId,
         budgetId: selectedBudgetId || activeBudgetId,
         defaultCat: newCategoryIsDefault,
@@ -269,11 +270,13 @@ export const useCategoriesPage = () => {
     }
     
     try {
-      // Extract just the filename from the icon path if it exists
-      let iconName;
-      if (editingCategory.icon) {
+      // Handle icon based on its type
+      let iconValue = editingCategory.icon;
+      
+      // Only extract filename if it's a traditional file path and not a Font Awesome class
+      if (iconValue && !iconValue.startsWith("fa") && !iconValue.startsWith("http")) {
         // Get only the filename from the path (e.g., "neko.jpg" from "/image/icon/neko.jpg")
-        iconName = editingCategory.icon.split('/').pop();
+        iconValue = iconValue.split('/').pop() || iconValue;
       }
       
       // Create update payload based on what the API expects
@@ -286,12 +289,9 @@ export const useCategoriesPage = () => {
       } = {
         name: editingCategory.name,
         categoryGroupId: editingCategory.categoryGroupId,
-        budgetId: editingCategory.budgetId
+        budgetId: editingCategory.budgetId,
+        icon: iconValue
       };
-
-      if (iconName) {
-        updateData.icon = iconName;
-      }
 
       if (editingCategory.defaultCat === true) {
         updateData.defaultCat = true;

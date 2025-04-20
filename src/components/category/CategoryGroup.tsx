@@ -27,9 +27,10 @@ interface CategoryGroupProps {
   categories: CategoryResponse[] | undefined;
   budgets: BudgetData[];
   editingCategory: CategoryResponse | null;
+  localIconMappings?: { [categoryId: number]: string }; // Thêm prop để lưu trữ icon maps
   onToggleExpand: () => void;
-  onEditClick: (group: CategoryGroup) => void;
   onDeleteClick: (groupId: number) => void;
+  onEditClick: (group: CategoryGroup) => void;
   onAddCategory: (groupId: number) => void;
   editingGroupId: number | null;
   editingGroupName: string;
