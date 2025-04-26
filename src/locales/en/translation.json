@@ -41,7 +41,9 @@
     "language": "Language",
     "selectCurrency": "Select Currency",
     "selectLanguage": "Select Language",
-    "avatarSection.title": "Avatar"
+    "avatarSection.title": "Avatar",
+    "avatarSection.upload": "Upload",
+    "avatarSection.remove": "Remove"
   },
   "settings": {
     "title": "Settings",

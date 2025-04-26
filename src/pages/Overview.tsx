@@ -10,7 +10,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { BadgeAlert } from "lucide-react";
 import { useBudget } from "@/hooks/useBudget";
 
 import { memo, useState, useEffect } from "react";
@@ -73,33 +72,7 @@ const Overview = () => {
       {/* Stats Cards */}
       {/* Budget Overview Component */}
       <BudgetOverview />
-      {/* Income and Expense Summary */}
-      <div className=" grid-cols-1 md:grid-cols-1 gap-6  mx-auto">
-        <Card className="stat-card items-center justify-center">
-          <CardHeader>
-            <CardTitle>Net Income</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Total income after deducting expenses.
-            </p>
-          </CardHeader>
-          <CardContent className="text-xl font-bold mt-2">
-            <p
-              className={`text-2xl font-bold ${
-                totalIncome - totalExpense < 0
-                  ? "text-destructive"
-                  : "text-zen-green"
-              }`}
-            >
-              {formatCurrency(Math.abs(totalIncome - totalExpense))}
-              {totalIncome - totalExpense < 0 && (
-                <span className="text-xs ml-2 text-muted-foreground font-normal inline-flex items-center gap-1">
-                  deficit <BadgeAlert className="w-4 h-4 text-red-700 " />
-                </span>
-              )}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+    
       {/* Income vs Expenses Chart */}
       <IncomeExpenseChart />
       {/* Stats Cards */}
@@ -211,13 +184,13 @@ const Overview = () => {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#001e2b",
-                    border: "1px solid #ffffff20",
+                    border: "1px solid #135527",
                     borderRadius: "8px",
                   }}
                   labelStyle={{ color: "#ffffff" }}
                 />
                 <Legend />
-                <Bar dataKey="value" fill="#00b8d4" />
+                <Bar dataKey="value" fill="#135527" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -225,13 +198,13 @@ const Overview = () => {
       </Card>
 
       {/* Recent Transactions */}
-      <div className="bg-white/50 dark:bg-slate-900  rounded-xl p-6 border border-white/10">
+      <Card className=" dark:bg-slate-900  rounded-xl p-6 border border-white/10">
         <h3 className="text-xl font-semibold  mb-4">Recent Transactions</h3>
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              className="flex items-center justify-between p-4 bg-white/50 dark:bg-slate-900 rounded-lg"
+              className="flex items-center justify-between p-4  dark:bg-slate-900 rounded-lg"
             >
               <div className="flex items-center space-x-4">
                 <div className="w-10 h-10 rounded-full bg-[#00ed64]/20 flex items-center justify-center">
@@ -249,7 +222,7 @@ const Overview = () => {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
