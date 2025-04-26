@@ -320,6 +320,16 @@ export function InvoiceRecognition({
             categoryId: extractedData.categoryId,
             isIncome: extractedData.type === "INCOME",
           }}
+          onSuccess={() => {
+            if (onTransactionConfirmed) {
+              console.log(
+                "Calling onTransactionConfirmed from TransactionForm success"
+              );
+              onTransactionConfirmed();
+            }
+            setIsTransactionFormOpen(false);
+            resetUpload();
+          }}
         />
       )}
     </Card>

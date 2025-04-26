@@ -7,7 +7,8 @@ interface TransactionFormProps {
   prefillData?: Partial<TransactionFormValues>;
   editMode?: boolean;
   transactionId?: number;
-  onEditSuccess?: () => void; // Callback after successful edit or add
+  onEditSuccess?: () => void; // Callback sau khi edit thành công
+  onSuccess?: () => void; // Callback chung cho cả add và edit
 }
 
 export function TransactionForm({
@@ -17,6 +18,7 @@ export function TransactionForm({
   editMode = false,
   transactionId,
   onEditSuccess,
+  onSuccess,
 }: TransactionFormProps) {
   return (
     <TransactionFormMain
@@ -25,7 +27,8 @@ export function TransactionForm({
       prefillData={prefillData}
       editMode={editMode}
       transactionId={transactionId}
-      onSuccess={onEditSuccess} // Use for both edit and add operations
+      onEditSuccess={onEditSuccess} // Giữ lại để tương thích với code hiện tại
+      onSuccess={onSuccess} // Truyền callback mới
     />
   );
 }

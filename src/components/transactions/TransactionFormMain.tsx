@@ -23,13 +23,15 @@ import { CategorySelector } from "./CategorySelector";
 import { TransactionDateSelector } from "./TransactionDateSelector";
 import { TransactionFormValues } from "@/schemas/transactionFormSchema";
 
+// Đồng nhất interface với TransactionForm.tsx
 interface TransactionFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   prefillData?: Partial<TransactionFormValues>;
   editMode?: boolean;
   transactionId?: number;
-  onSuccess?: () => void;
+  onSuccess?: () => void; // Callback sau khi tạo hoặc cập nhật thành công
+  onEditSuccess?: () => void; // Để tương thích ngược với code hiện tại
 }
 
 export function TransactionFormMain({
@@ -39,6 +41,7 @@ export function TransactionFormMain({
   editMode = false,
   transactionId,
   onSuccess,
+  onEditSuccess,
 }: TransactionFormProps) {
   // Sử dụng custom hook để quản lý logic form
   const {
@@ -58,7 +61,11 @@ export function TransactionFormMain({
     prefillData,
     editMode,
     transactionId,
-    onSuccess,
+    // Sử dụng cả hai callback nếu được cung cấp
+    onSuccess: () => {
+      if (onSuccess) onSuccess();
+      if (onEditSuccess) onEditSuccess();
+    },
     onClose: () => onOpenChange(false),
   });
 
