@@ -131,7 +131,7 @@ export function EditBudgetForm({
                       Budget Amount
                     </FormLabel>
                     <FormControl>
-                      <div className="relative">
+                        <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2">
                           {currencySymbol}
                         </div>
