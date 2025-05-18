@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useBudget } from "@/hooks/useBudget";
+import { NetIncome } from "@/components/reports/NetIncome";
 
 import { memo, useState, useEffect } from "react";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
@@ -25,6 +26,7 @@ import {
   Calendar,
 } from "lucide-react";
 import IncomeExpenseChart from "@/components/overview/IncomeExpenseChart";
+import RecentTransaction from "@/components/transactions/RecentTransaction";
 
 // Sample data for charts
 const monthlyData = [
@@ -72,9 +74,12 @@ const Overview = () => {
       {/* Stats Cards */}
       {/* Budget Overview Component */}
       <BudgetOverview />
-    
+
       {/* Income vs Expenses Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <IncomeExpenseChart />
+        <NetIncome />
+      </div>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="stat-card">
@@ -198,31 +203,7 @@ const Overview = () => {
       </Card>
 
       {/* Recent Transactions */}
-      <Card className=" dark:bg-slate-900  rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-semibold  mb-4">Recent Transactions</h3>
-        <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between p-4  dark:bg-slate-900 rounded-lg"
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-full bg-[#00ed64]/20 flex items-center justify-center">
-                  <span className="text-[#00ed64]">T{i}</span>
-                </div>
-                <div>
-                  <p className="">Transaction {i}</p>
-                  <p className="text-sm text-gray-400">Category {i}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="">{formatCurrency(Math.random() * 1000)}</p>
-                <p className="text-sm text-gray-400">2 hours ago</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <RecentTransaction />
     </div>
   );
 };
