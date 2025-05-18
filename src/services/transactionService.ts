@@ -16,6 +16,7 @@ export interface TransactionResponse {
   id: number;
   budgetId: number;
   categoryId: number;
+  categoryName?: string;
   amount: number;
   type: string;
   note: string;
@@ -27,6 +28,18 @@ export interface CategoryGroupStatistics {
   groupName: string;
   totalAmount: number;
   percentage: number;
+}
+
+export interface PieChartData {
+  categoryId: number;
+  categoryName: string;
+  totalAmount: number;
+  count: number;
+}
+
+export interface PieChartResponse {
+  income: PieChartData[];
+  expense: PieChartData[];
 }
 
 const getAuthHeader = () => {
@@ -106,6 +119,15 @@ export const getTopExpenses = async (limit = 10): Promise<TransactionResponse[]>
   return response.data;
 };
 
+// Get recent transactions
+export const getRecentTransactions = async (limit = 5): Promise<TransactionResponse[]> => {
+  const response = await axios.get(
+    `${API_URL}/transactions/recent?limit=${limit}`, 
+    getAuthHeader()
+  );
+  return response.data;
+};
+
 // Lấy dữ liệu thu nhập và chi tiêu theo từng tháng
 export const getMonthlyIncomeExpense = async (year = new Date().getFullYear()) => {
   try {
@@ -128,6 +150,36 @@ export const getAllBudgetIncomeExpense = async () => {
   }
 };
 
+// Get pie chart data for both income and expense
+export const getPieChartData = async (budgetId?: number): Promise<PieChartResponse> => {
+  const url = budgetId 
+    ? `${API_URL}/transactions/pie-chart?budgetId=${budgetId}`
+    : `${API_URL}/transactions/pie-chart`;
+  
+  const response = await axios.get(url, getAuthHeader());
+  return response.data;
+};
+
+// Get pie chart data for expenses only
+export const getExpensePieChartData = async (budgetId?: number): Promise<PieChartData[]> => {
+  const url = budgetId 
+    ? `${API_URL}/transactions/pie-chart/expense?budgetId=${budgetId}`
+    : `${API_URL}/transactions/pie-chart/expense`;
+  
+  const response = await axios.get(url, getAuthHeader());
+  return response.data;
+};
+
+// Get pie chart data for income only
+export const getIncomePieChartData = async (budgetId?: number): Promise<PieChartData[]> => {
+  const url = budgetId 
+    ? `${API_URL}/transactions/pie-chart/income?budgetId=${budgetId}`
+    : `${API_URL}/transactions/pie-chart/income`;
+  
+  const response = await axios.get(url, getAuthHeader());
+  return response.data;
+};
+
 export default {
   createTransaction,
   updateTransaction,
@@ -136,6 +188,10 @@ export default {
   getUserIncomeExpense,
   getCategoryGroupStatistics,
   getTopExpenses,
+  getRecentTransactions,
   getMonthlyIncomeExpense,
   getAllBudgetIncomeExpense,
+  getPieChartData,
+  getExpensePieChartData,
+  getIncomePieChartData,
 };

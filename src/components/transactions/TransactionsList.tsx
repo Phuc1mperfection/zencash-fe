@@ -101,7 +101,6 @@ export const TransactionsList = ({
   };
 
   const handleEditClick = (transaction: TransactionResponse) => {
-    console.log("Edit clicked for transaction:", transaction);
 setTimeout(() => {
   setTransactionToEdit(transaction);
   setIsEditDialogOpen(true);
@@ -119,7 +118,6 @@ setTimeout(() => {
   };
 
   const handleDeleteClick = (transactionId: number) => {
-    console.log("Delete clicked for transactionId:", transactionId);
 
     // Delay opening dialog
     setTimeout(() => {
@@ -128,7 +126,6 @@ setTimeout(() => {
     }, 0);
   };
   const handleConfirmDelete = async () => {
-    console.log("Confirm delete for transactionId:", transactionToDelete);
     if (transactionToDelete) {
       if (onDelete) {
         onDelete(transactionToDelete);

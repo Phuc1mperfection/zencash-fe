@@ -63,11 +63,11 @@ export function TransactionAmountField({
             <FormControl>
               <Button
                 type="button"
-                variant={field.value ? "default" : "outline"}
+                variant={field.value ? "default" : "destructive"}
                 className={`mt-2 ${
                   field.value
                     ? "bg-zen-green text-white"
-                    : "border-muted-foreground"
+                    : "bg-red-400 text-white"
                 }`}
                 onClick={onToggleType}
               >
