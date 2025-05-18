@@ -69,32 +69,34 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full transition-all duration-300 z-40  ${
-        isScrolled ? "bg-white dark:bg-zinc-900" : "bg-transparent"
-      } ${isAuthenticated ? "text-black dark:text-white" : ""}`}
+      className={`fixed w-full transition-all duration-300 z-40 ${
+        isScrolled ? "bg-emerald-100/80 dark:bg-zinc-900/80" : "bg-transparent" //nếu không scroll thì bg trong suốt
+      } ${location.pathname === "/" ? "bg-transparent " : "shadow-none"} ${
+        isScrolled ? "shadow-lg " : ""
+      } ${isScrolled ? "text-black" : "text-black "} ${
+        isAuthenticated ? "text-black dark:text-white" : ""
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div
-            className="flex-shrink-0 flex items-center cursor-pointer"
+            <div
+            className="flex-shrink-0 flex items-center cursor-pointer md:ml-20 ml-10 transform transition-transform duration-300 hover:scale-110"
             onClick={() => navigate("/")}
-          >
-            {/* <Wallet className="h-8 w-8 text-[#00ed64]" /> */}
+            >
             <img src="/logo.svg" alt="Zen Cash Logo" className="h-8 w-8" />
             <span
               className={`ml-2 text-xl font-bold transition-colors duration-300 ${
-                isScrolled
-                  ? isAuthenticated
-                    ? "text-black dark:text-white "
-                    : "text-[#001e2b] dark:text-white"
-                  : "text-white  "
+              isScrolled
+                ? isAuthenticated
+                ? "text-white dark:text-white "
+                : "text-[#25b661] dark:text-white"
+                : "text-white"
               }`}
             >
               Zen Cash
             </span>
-          </div>
-
+            </div>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Theme toggle button */}
@@ -173,7 +175,6 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
           {/* Mobile menu section */}
           <div className="md:hidden flex items-center space-x-3">
             {/* Theme toggle for mobile */}
@@ -207,7 +208,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white dark:bg-zinc-800 shadow-lg">
+        <div className="md:hidden bg-white/80 dark:bg-zinc-800/80 shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {isAuthenticated && location.pathname !== "/dashboard" ? (
               <>
