@@ -54,6 +54,21 @@ const authService = {
     }
   },
 
+  async logoutServer(): Promise<void> {
+    try {
+      const accessToken = this.getAccessToken();
+      if (accessToken) {
+        await api.post(`${API_URL}/auth/logout`);
+        console.log('Server logout successful');
+      }
+    } catch (error) {
+      console.error('Server logout failed:', error);
+    } finally {
+      // Always clear local storage even if server logout fails
+      this.logout();
+    }
+  },
+
   logout(): void {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -126,12 +141,12 @@ const authService = {
     }
   },
 
-  handleLogout(message?: string): void {
+  async handleLogout(message?: string): Promise<void> {
     if (message) {
       // Hiển thị thông báo cho người dùng
       alert(message);
     }
-    this.logout();
+    await this.logoutServer(); // Call server-side logout first
     window.location.href = '/login';
   },
 
