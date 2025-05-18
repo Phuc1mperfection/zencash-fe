@@ -158,7 +158,7 @@ export const MonthlyIncomeExpenseChart = () => {
               <Bar
                 dataKey="income"
                 name="Income"
-                fill="#125526"
+                fill="#1CC354"
                 radius={[4, 4, 0, 0]}
               >
                 <LabelList dataKey="income" position="top" formatter={(v: number) => v > 0 ? formatCurrency(v, false) : ''} />
@@ -166,7 +166,7 @@ export const MonthlyIncomeExpenseChart = () => {
               <Bar
                 dataKey="expense"
                 name="Expense"
-                fill="#1CC354"
+                fill="#FF4D4F"
                 radius={[4, 4, 0, 0]}
               >
                 <LabelList dataKey="expense" position="top" formatter={(v: number) => v > 0 ? formatCurrency(v, false) : ''} />
