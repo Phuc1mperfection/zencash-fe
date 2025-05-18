@@ -33,7 +33,7 @@ export function BudgetOverview() {
         </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 ">
           {/* Total Budget */}
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Total Budget</p>
@@ -41,10 +41,10 @@ export function BudgetOverview() {
           </div>
 
           {/* Spent So Far */}
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Spent So Far</p>
             <p className="text-3xl font-bold">{formatCurrency(budgetOverview.totalSpent)}</p>
-          </div>
+          </div> */}
 
           {/* Remaining */}
           <div className="space-y-1">
