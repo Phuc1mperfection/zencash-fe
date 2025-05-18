@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/use-Auth";
+import { useNavigate } from "react-router-dom";
 
 import { SidebarProps } from "./types";
 import { sidebarVariants, overlayVariants } from "./animations";
@@ -11,6 +12,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   const [isDesktopOpen, setIsDesktopOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Xử lý responsive - sử dụng useCallback để tránh tạo hàm mới mỗi khi render
   const handleResize = useCallback(() => {
@@ -24,7 +26,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   const handleLogout = useCallback(() => {
     logout();
     setIsMobileOpen(false);
-  }, [logout, setIsMobileOpen]);
+    navigate("/");
+  }, [logout, navigate, setIsMobileOpen]);
 
   // Handler khi click vào menu item với useCallback
   const handleItemClick = useCallback(() => {
@@ -122,3 +125,4 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
 };
 
 export default Sidebar;
+
