@@ -147,3 +147,55 @@
   }
 }
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .card-dashboard {
+    @apply bg-card p-4 rounded-lg border border-border shadow-sm animate-fade-in;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-2 py-2 px-3 rounded-md text-muted-foreground hover: bg-accent hover:text-accent-foreground transition-colors;
+  }
+
+  .nav-link.active {
+    @apply bg-accent text-accent-foreground font-medium;
+  }
+
+  .stat-card {
+    @apply rounded-xl p-6 flex flex-col bg-card border;
+  }
+
+  .stat-value {
+    @apply text-2xl font-semibold mt-2;
+  }
+
+  .stat-label {
+    font-size: 0.875rem; /* from text-sm */
+    color: hsl(215 20% 65%); /* from text-muted-foreground */
+  }
+}
+
+
+
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
