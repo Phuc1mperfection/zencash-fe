@@ -67,22 +67,22 @@ export const CategoriesPage: FC = () => {
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
 
-          {/* Budget Selector */}
-          <Select
+            {/* Budget Selector */}
+            <Select
             value={activeBudgetId?.toString()}
             onValueChange={(value) => setActiveBudgetId(Number(value))}
-          >
-            <SelectTrigger className="w-[180px]">
+            >
+            <SelectTrigger className="w-[200px] border border-white  ">
               <SelectValue placeholder="Select Budget" />
             </SelectTrigger>
             <SelectContent>
               {budgets.map((budget) => (
-                <SelectItem key={budget.id} value={budget.id.toString()}>
-                  {budget.name}
-                </SelectItem>
+              <SelectItem key={budget.id} value={budget.id.toString()}>
+                {budget.name}
+              </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+            </Select>
         </div>
 
         <div className="flex items-center gap-2">

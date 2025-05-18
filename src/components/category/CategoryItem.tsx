@@ -26,7 +26,7 @@ interface CategoryItemProps {
 
 export const CategoryItem: React.FC<CategoryItemProps> = ({
   category,
-  budgets,
+  // budgets,
   editingCategory,
   onEdit,
   onDelete,
@@ -38,7 +38,7 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
   const isEditing = editingCategory?.id === category.id;
 
   // Get matched budget
-  const matchedBudget = budgets.find((b) => b.id === category.budgetId);
+  // const matchedBudget = budgets.find((b) => b.id === category.budgetId);
 
 
   // Function to render icon based on its type (Font Awesome or image URL)
@@ -110,15 +110,13 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
               checked={category.defaultCat}
               onCheckedChange={onToggleDefault}
               /> */}
-                <span>{category.name}</span>
+                {/* <span>{category.name}</span> */}
                 
             {category.budgetId && (
               <Badge variant="default">
-                <span className="mr-1">{category.icon &&  renderIcon(category.icon)}</span>
+                <span className="mr-4">{category.icon &&  renderIcon(category.icon)}</span>
                 
-                {matchedBudget
-                  ? matchedBudget.name
-                  : `Budget ID: ${category.budgetId}`}
+                {category.name}
               </Badge>
             )}
           </div>
