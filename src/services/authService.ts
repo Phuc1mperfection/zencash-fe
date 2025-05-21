@@ -7,6 +7,8 @@ import { User } from "@/types/User";
 import api from "./api";
 import { toast } from "react-hot-toast";
 
+
+
 const API_URL = "http://localhost:8080/api";
 
 const authService = {
@@ -150,6 +152,16 @@ const authService = {
     window.location.href = '/login';
   },
 
+  async resetPassword(email: string): Promise<string> {
+    try {
+      const response = await api.post(`${API_URL}/auth/reset-password`, { email });
+      return response.data;
+    } catch (error) {
+      console.error('Password reset request failed:', error);
+      throw error;
+    }
+  },
+  
   setUserInfo(data: AuthResponse): void {
     // Lưu token riêng biệt
     localStorage.setItem("accessToken", data.accessToken);

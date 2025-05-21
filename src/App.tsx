@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
 import Landing from "./pages/Landing";
 import useAutoRefreshToken from "./hooks/useAutoRefreshToken";
 import { useAuth } from "./hooks/use-Auth";
@@ -58,10 +59,11 @@ function AppContent() {
           } ${isAuthenticated ? "pt-16" : ""}`}
         >
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<Landing />} />{" "}
             <Route element={<PublicRoute />}>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Route>
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard/*" element={<Dashboard />} />
