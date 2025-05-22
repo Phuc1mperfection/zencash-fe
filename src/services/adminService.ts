@@ -40,7 +40,7 @@ const adminService = {
   // Toggle user active status
   toggleUserStatus: async (userId: string, active: boolean): Promise<User> => {
     try {
-      const response = await api.put(`/admin/users/${userId}/status`, { active });
+      const response = await api.patch(`/admin/users/${userId}/toggle-active`, { active });
       return response.data;
     } catch (error) {
       console.error('Error toggling user status:', error);
