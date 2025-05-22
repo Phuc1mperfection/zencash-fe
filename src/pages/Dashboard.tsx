@@ -6,6 +6,7 @@ import { Transactions } from "./Transactions";
 import Profile from "./Profile";
 import Budget from "./Budget";
 import { Categories } from "./Categories";
+import {GoalSpending} from "./GoalSpending";
 const Dashboard = () => {
   return (
     <div className="flex-1 h-full">
@@ -21,6 +22,7 @@ const Dashboard = () => {
             <Route path="profile" element={<Profile />} />
             <Route path="budget" element={<Budget />} />
             <Route path="categories" element={<Categories/>} />
+            <Route path="goalspending" element={<GoalSpending/>} />
           </Routes>
         </div>
       </div>
