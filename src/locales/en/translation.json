@@ -75,7 +75,8 @@
     "settings": "Settings",
     "profile": "Profile",
     "budget": "Budget",
-    "categories": "Categories"
+    "categories": "Categories",
+    "goalspending": "Goals Spending"
   },
   "errors": {
     "required": "This field is required",

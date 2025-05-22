@@ -66,7 +66,9 @@
     "settings": "Cài đặt",
     "profile": "Hồ sơ",
     "budget": "Ngân sách",
-    "categories": "Danh mục"
+    "categories": "Danh mục",
+    "goalspending": "Mục tiêu chi tiêu"
+
   },
   "errors": {
     "required": "Trường này là bắt buộc",
