@@ -9,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 
 const suggestedQuestions = [
+  "Show me my top expenses",
   "How can I reduce my spending?",
   "What is my budget status?",
-  "Show me my top expenses",
   "How do I create a budget?",
 ];
 
