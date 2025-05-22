@@ -94,7 +94,7 @@ export const HowItWorksSection = () => {
   return (
     <section
       ref={howItWorksSectionRef}
-      className="py-20 px-4 bg-gray-100 relative"
+      className="py-20 px-4 bg-gray-100 relative" 
     >
       <motion.div
         className="max-w-6xl mx-auto"
@@ -133,6 +133,13 @@ export const HowItWorksSection = () => {
           ))}
         </div>
       </motion.div>
+          <motion.div
+          initial={{ width: "0%" }}
+          whileInView={{ width: "80%" }}
+          transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+          className=" border-b-8 border-[#00ed64]/55 absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full rounded-full"
+          style={{ height: "10px" }}
+        />
     </section>
   );
 };

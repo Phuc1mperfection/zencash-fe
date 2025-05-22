@@ -91,7 +91,7 @@ const FeedbackSection = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 rows={5}
                 className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                placeholder="Chia sẻ ý kiến của bạn với chúng tôi..."
+                placeholder="Share your thoughts..."
               />
             </div>
 

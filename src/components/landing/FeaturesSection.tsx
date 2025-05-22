@@ -81,7 +81,7 @@ const FeatureCard = ({
         }}
         className="h-full"
       >
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl transition-all duration-300 border border-white/20 hover:border-[#00ed64]/40 h-full flex flex-col">
+        <div className="bg-white/10  p-6 rounded-xl transition-all duration-300 border border-white/20 hover:border-[#00ed64]/40 h-full flex flex-col">
           <motion.div
             initial={{ scale: 0, rotate: -30 }}
             whileInView={{ scale: 1, rotate: 0 }}

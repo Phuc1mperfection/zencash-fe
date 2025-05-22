@@ -130,7 +130,7 @@ export const HeroSection = ({ scrollYProgress }: HeroSectionProps) => {
             </Link>
             <Link
               to="/about"
-              className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-colors"
+              className="px-8 py-4 bg-white/10  text-white rounded-lg font-semibold hover:bg-white/20 transition-colors"
             >
               <motion.span
                 whileHover={{ scale: 1.05 }}
