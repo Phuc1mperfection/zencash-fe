@@ -4,10 +4,10 @@ import {
   BarChart,
   Settings,
   ArrowLeftRight,
-
   CircleUserRound,
   Wallet,
   Archive,
+  Shield,
 } from "lucide-react";
 import { SidebarContentProps } from "./types";
 import SidebarItem from "./SidebarItem";
@@ -61,8 +61,13 @@ const menuItems = [
 ];
 
 const SidebarContent = memo(
-  ({ isOpen, handleLogout, handleItemClick, user }: SidebarContentProps) => {
-
+  ({
+    isOpen,
+    handleLogout,
+    handleItemClick,
+    user,
+    isAdmin,
+  }: SidebarContentProps) => {
     return (
       <div className="flex flex-col h-full">
         {/* Top Section: Logo/Title (optional) and Menu Items */}
@@ -86,6 +91,18 @@ const SidebarContent = memo(
                 translationKey={item.translationKey}
               />
             ))}
+
+            {isAdmin && (
+              <SidebarItem
+                key="/admin"
+                icon={Shield}
+                text="Admin"
+                to="/admin"
+                isOpen={isOpen}
+                onClick={handleItemClick}
+                translationKey="sidebar.admin"
+              />
+            )}
           </nav>
         </div>
 

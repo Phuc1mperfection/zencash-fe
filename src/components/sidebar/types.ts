@@ -12,6 +12,7 @@ export interface SidebarContentProps {
   handleLogout: () => void;
   handleItemClick: () => void;
   user: { username?: string; email?: string; avatar?: string } | null;
+  isAdmin?: boolean;
 }
 
 // Interface cho props của component SidebarItem

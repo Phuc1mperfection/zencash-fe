@@ -10,9 +10,10 @@ import { sidebarVariants, overlayVariants } from "./animations";
 import SidebarContent from "./SidebarContent";
 const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   const [isDesktopOpen, setIsDesktopOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, hasRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = hasRole("ADMIN");
 
   // Xử lý responsive - sử dụng useCallback để tránh tạo hàm mới mỗi khi render
   const handleResize = useCallback(() => {
@@ -66,14 +67,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
           className="absolute -right-3 top-8 w-6 h-6 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center text-white shadow-md z-50 transition-colors duration-200"
         >
           {isDesktopOpen ? <X size={16} /> : <Menu size={16} />}
-        </button>
-
+        </button>{" "}
         {/* Desktop Sidebar Content */}
         <SidebarContent
           isOpen={isDesktopOpen}
           handleLogout={handleLogout}
           handleItemClick={handleItemClick}
           user={user}
+          isAdmin={isAdmin}
         />
       </motion.div>
 
@@ -108,13 +109,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
               >
                 <X size={24} />
               </button>
-
-              {/* Mobile Sidebar Content */}
+              {/* Mobile Sidebar Content */}{" "}
               <SidebarContent
                 isOpen={true}
                 handleLogout={handleLogout}
                 handleItemClick={handleItemClick}
                 user={user}
+                isAdmin={isAdmin}
               />
             </motion.div>
           </>
@@ -125,4 +126,3 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
 };
 
 export default Sidebar;
-

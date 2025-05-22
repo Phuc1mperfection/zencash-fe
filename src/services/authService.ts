@@ -11,11 +11,18 @@ import { toast } from "react-hot-toast";
 
 const API_URL = "http://localhost:8080/api";
 
-const authService = {
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+const authService = {  async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       const response = await api.post(`${API_URL}/auth/login`, credentials);
       if (response.data.accessToken) {
+        // Log the roles received from the backend for debugging
+        
+        // Chuyển đổi Set<String> từ Java sang mảng JavaScript nếu cần
+        const roles = response.data.roles ? 
+          (Array.isArray(response.data.roles) ? response.data.roles : Array.from(response.data.roles)) : 
+          [];
+        
+        
         // Lưu thông tin user từ response
         this.setUserInfo({
           username: response.data.username,
@@ -25,6 +32,7 @@ const authService = {
           fullname: response.data.fullname,
           currency: response.data.currency,
           avatar: response.data.avatar,
+          roles: roles,
         });
       }
       return response.data;
@@ -70,18 +78,28 @@ const authService = {
       this.logout();
     }
   },
-
   logout(): void {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("userRoles");
     console.log('User logged out, tokens removed');
-  },
-
-  getCurrentUser(): AuthResponse | null {
+  },  getCurrentUser(): AuthResponse | null {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const storedRoles = localStorage.getItem("userRoles");
+      
+      // Parse roles from localStorage properly
+      let roles: string[] = [];
+      if (storedRoles) {
+        try {
+          const parsedRoles = JSON.parse(storedRoles);
+          roles = Array.isArray(parsedRoles) ? parsedRoles : [];
+        } catch (error) {
+          console.error("Error parsing userRoles from localStorage:", error);
+        }
+      }
       return {
         username: user.username || "",
         email: user.email || "",
@@ -90,6 +108,7 @@ const authService = {
         fullname: user.fullname || "",
         currency: user.currency || "",
         avatar: user.avatar || "",
+        roles: roles,
       };
     }
     return null;
@@ -115,7 +134,6 @@ const authService = {
       return true;
     }
   },
-
   async refreshToken(): Promise<AuthResponse> {
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
@@ -127,13 +145,37 @@ const authService = {
         refreshToken
       });
 
-      const { accessToken, refreshToken: newRefreshToken, username, email, fullname } = response.data;
+      const { 
+        accessToken, 
+        refreshToken: newRefreshToken, 
+        username, 
+        email, 
+        fullname, 
+        roles 
+      } = response.data;
+        // Preserve roles from the previous session if not included in the response
+      const storedRoles = localStorage.getItem("userRoles");
+      const currentRoles = storedRoles ? JSON.parse(storedRoles) : [];
+      
+      // Xử lý roles từ response (có thể là Java Set)
+      let processedRoles = currentRoles; // Mặc định giữ nguyên roles hiện tại
+      if (roles) {
+        // Nếu roles là Set từ Java, nó có thể được chuyển thành object trong JSON
+        if (typeof roles === 'object' && !Array.isArray(roles)) {
+          processedRoles = Object.values(roles);
+        } else if (Array.isArray(roles)) {
+          processedRoles = roles;
+        }
+        console.log("Processed roles from refresh token:", processedRoles);
+      }
+      
       this.setUserInfo({
         username: username,
         email: email,
         accessToken: accessToken,
         refreshToken: newRefreshToken,
-        fullname: fullname
+        fullname: fullname,
+        roles: processedRoles // Sử dụng roles đã xử lý
       });
       
       return response.data;
@@ -160,12 +202,23 @@ const authService = {
       console.error('Password reset request failed:', error);
       throw error;
     }
-  },
-  
-  setUserInfo(data: AuthResponse): void {
+  },    setUserInfo(data: AuthResponse): void {
     // Lưu token riêng biệt
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
+      
+    // Xử lý roles từ Set<String> của Java thành mảng JavaScript
+    let roles: string[] = [];
+    if (data.roles) {
+      // Nếu roles là Set từ Java, nó có thể được chuyển thành object trong JSON
+      if (typeof data.roles === 'object' && !Array.isArray(data.roles)) {
+        roles = Object.values(data.roles) as string[];
+      } else if (Array.isArray(data.roles)) {
+        roles = data.roles;
+      }
+    }
+    console.log("Setting user roles in localStorage:", roles);
+    localStorage.setItem("userRoles", JSON.stringify(roles));
     
     // Lưu thông tin người dùng dưới dạng JSON
     localStorage.setItem("user", JSON.stringify({
@@ -174,6 +227,7 @@ const authService = {
       fullname: data.fullname || "",
       currency: data.currency || "",
       avatar: data.avatar || "",
+      roles: roles, // Include roles in the user object for easy access
     }));
   },
   
@@ -186,7 +240,11 @@ const authService = {
       console.log('Profile update response:', response.data);
       
       // Update localStorage with new user data
-      if (response.data) {
+      if (response.data) {        // Lấy roles hiện tại từ localStorage
+        const storedRoles = localStorage.getItem("userRoles");
+        const currentRoles = storedRoles ? JSON.parse(storedRoles) : [];
+        
+        // Bảo tồn roles khi cập nhật profile
         this.setUserInfo({
           username: response.data.username || localStorage.getItem("username") || "",
           email: response.data.email || localStorage.getItem("email") || "",
@@ -195,6 +253,7 @@ const authService = {
           fullname: response.data.fullname || localStorage.getItem("fullname") || "",
           currency: response.data.currency || localStorage.getItem("currency") || "",
           avatar: response.data.avatar || userData.avatar || "",
+          roles: response.data.roles || currentRoles // Ưu tiên roles từ response, nếu không có thì giữ roles hiện tại
         });
         
         // Show success toast at service level

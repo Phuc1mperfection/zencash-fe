@@ -7,7 +7,6 @@ import { showToast } from "../utils/toast";
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -19,12 +18,26 @@ export default function Login() {
     };
 
     const loadingToast = showToast.loading("Signing in...");
-
     try {
-      await login(loginData);
+      const response = await login(loginData);
       showToast.dismiss(loadingToast);
       showToast.success("Welcome back!");
-      navigate("/dashboard", { replace: true });
+
+      let hasAdminRole = false;
+
+      if (response.roles) {
+        if (Array.isArray(response.roles)) {
+          hasAdminRole = response.roles.includes("ADMIN");
+        } else if (typeof response.roles === "object") {
+          // Handle case when roles is a Java Set converted to object
+          hasAdminRole = Object.values(response.roles).includes("ADMIN");
+        }
+      }
+      if (hasAdminRole) {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       showToast.dismiss(loadingToast);

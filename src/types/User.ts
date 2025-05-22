@@ -8,5 +8,5 @@ export interface User {
     language?: string;
     avatar?: string;
     accessToken?: string;
-    // Add more fields if your user object has them
+    roles?: string[] | Record<string, string> | Set<string>;
   }

@@ -9,12 +9,17 @@ import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
+import AdminRoute from "./components/AdminRoute";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
+import Unauthorized from "./pages/Unauthorized";
 import Landing from "./pages/Landing";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UserManagement from "./pages/admin/UserManagement";
+import AdminSettings from "./pages/admin/AdminSettings";
 import useAutoRefreshToken from "./hooks/useAutoRefreshToken";
 import { useAuth } from "./hooks/use-Auth";
 import { ChatAssistant } from "./components/chat/ChatAssistant";
@@ -44,7 +49,7 @@ function AppContent() {
   const showSidebar = isAuthenticated && isDashboardRoute;
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-bl from-[#f0ebe3]  via-emerald-500 via-90% to-emerald-300  dark:bg-gradient-to-b dark:from-[#001e2b] dark:to-[#023430]">
+    <div className="relative min-h-screen w-full bg-gradient-to-bl from-[#f0ebe3] via-emerald-500 via-90% to-emerald-300 dark:bg-gradient-to-b dark:from-[#001e2b] dark:to-[#023430]">
       <div className="flex">
         {showSidebar && (
           <Sidebar
@@ -59,14 +64,20 @@ function AppContent() {
           } ${isAuthenticated ? "pt-16" : ""}`}
         >
           <Routes>
-            <Route path="/" element={<Landing />} />{" "}
+            <Route path="/" element={<Landing />} />
             <Route element={<PublicRoute />}>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
             </Route>
+            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard/*" element={<Dashboard />} />
+            </Route>
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<UserManagement />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
           </Routes>
         </main>

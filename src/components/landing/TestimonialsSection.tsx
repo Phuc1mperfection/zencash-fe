@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import TestimonialCard from "../TestimonialCard";
+import TestimonialCard from "./TestimonialCard";
 
 interface SplitTextProps {
   text: string;

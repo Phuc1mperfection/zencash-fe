@@ -70,8 +70,10 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed w-full transition-all duration-300 z-40 ${
-        isScrolled ? "bg-emerald-100/80 dark:bg-zinc-900/80" : "bg-transparent" //nếu không scroll thì bg trong suốt
-      } ${location.pathname === "/" ? "bg-transparent " : "shadow-none"} ${
+        isScrolled ? "bg-emerald-200/70 backdrop-blur-md  dark:bg-transparent/10" : "bg-transparent " //nếu không scroll thì bg trong suốt
+      } ${location.pathname === "/" ? "bg-transparent " : "shadow-none"} ${ //khi ở trang chủ thì bg trong suốt
+        //nếu scroll thì bg trắng
+        //shadow none khi ở trang chủ
         isScrolled ? "shadow-lg " : ""
       } ${isScrolled ? "text-black" : "text-black "} ${
         isAuthenticated ? "text-black dark:text-white" : ""
@@ -90,7 +92,7 @@ const Navbar = () => {
               isScrolled
                 ? isAuthenticated
                 ? "text-white dark:text-white "
-                : "text-[#25b661] dark:text-white"
+                : "text-[#ffffff] dark:text-white"
                 : "text-white"
               }`}
             >
@@ -159,7 +161,7 @@ const Navbar = () => {
                   <a
                     key={link.name}
                     href={`#${link.name.toLowerCase()}`}
-                    className="flex items-center space-x-1 text-gray-600 dark:text-gray-300 hover:text-[#00ed64] transition-colors duration-200"
+                    className="flex items-center space-x-1 text-gray-300 dark:text-gray-300 hover:text-[#329732] dark:hover:text-[#00ed64] transition-colors duration-200"
                   >
                     {link.icon}
                     <span>{link.name}</span>
@@ -167,7 +169,7 @@ const Navbar = () => {
                 ))}
                 <button
                   onClick={handleSignIn}
-                  className="flex items-center space-x-1 text-gray-600 dark:text-gray-300 hover:text-[#00ed64] transition-colors duration-200"
+                  className="flex items-center space-x-1 text-gray-300 dark:text-gray-300 dark:hover:text-[#00ed64] transition-colors duration-200"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>Login</span>

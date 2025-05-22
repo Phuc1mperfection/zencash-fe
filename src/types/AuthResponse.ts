@@ -6,4 +6,5 @@ export interface AuthResponse {
     avatar?: string | null; // tên file avatar của người dùng
     accessToken: string;
     refreshToken: string;
+    roles?: string[] | Record<string, string> | Set<string>; // user roles (có thể từ Java Set)
   }
