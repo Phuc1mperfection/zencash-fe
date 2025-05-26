@@ -4,7 +4,6 @@ import {
   BarChart,
   Settings,
   ArrowLeftRight,
-  Target,
   CircleUserRound,
   Wallet,
   Archive,
@@ -41,14 +40,6 @@ const menuItems = [
     to: "/dashboard/transactions",
     translationKey: "sidebar.transactions",
   },
-  {
-    icon: Target,
-    text: "GoalSpending",
-    to: "/dashboard/goalspending",
-    translationKey: "sidebar.goalspending",
-  },
-
-
   {
     icon: BarChart,
     text: "Reports",
