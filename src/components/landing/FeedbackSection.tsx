@@ -127,7 +127,7 @@ const FeedbackSection = () => {
                   </>
                 ) : (
                   <>
-                    Gửi phản hồi <Send className="ml-2 h-4 w-4" />
+                    Send  <Send className="ml-2 h-4 w-4" />
                   </>
                 )}
               </button>
