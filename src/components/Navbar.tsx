@@ -12,7 +12,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/use-Auth";
 import { useTheme } from "../hooks/use-theme";
 import { useTranslation } from "react-i18next";
+import avatarService from "@/services/avatarService";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +52,9 @@ const Navbar = () => {
     { name: "About", icon: <Users className="w-4 h-4" /> },
     { name: "Contact", icon: <Phone className="w-4 h-4" /> },
   ];
-
+  const avatarUrl = user?.avatar
+    ? avatarService.getAvatarUrl(user.avatar)
+    : null;
   const handleSignIn = () => {
     navigate("/login");
     setIsOpen(false);
@@ -130,7 +133,8 @@ const Navbar = () => {
                       className="rounded-full h-8 w-8 ml-1"
                     >
                       <Avatar className="w-9 h-9 border-primary/50">
-                        {/* Fallback gradient likely fine for both modes */}
+                        <AvatarImage src={avatarUrl || undefined} alt={user?.username || "User"} />
+
                         <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-2xl">
                           {fallbackInitial}
                         </AvatarFallback>
